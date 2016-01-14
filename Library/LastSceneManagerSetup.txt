@@ -1,4 +1,0 @@
-sceneSetups:
-- path: Assets/_Project/_Scenes/Levels/1PlayerGod - Interacting.unity
-  isLoaded: 1
-  isActive: 1
