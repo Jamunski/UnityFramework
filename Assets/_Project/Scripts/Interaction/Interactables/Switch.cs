@@ -23,11 +23,13 @@ public class Switch : MonoBehaviour, IInteractable
     void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        for (int i = 0; i < target.Length; i++)
+        if (target != null)
         {
-            Gizmos.DrawLine(transform.position, target[i].transform.position);
-            Gizmos.DrawIcon(transform.position, icon.name);
-
+            for (int i = 0; i < target.Length; i++)
+            {
+                Gizmos.DrawLine(transform.position, target[i].transform.position);
+                Gizmos.DrawIcon(transform.position, icon.name);
+            }
         }
     }
 
@@ -45,7 +47,6 @@ public class Switch : MonoBehaviour, IInteractable
             {
                 this.GetComponent<Renderer>().material.color = Color.red;
             }
-
         }
     }
 
