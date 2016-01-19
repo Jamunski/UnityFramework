@@ -28,10 +28,7 @@ public class HUD : MonoBehaviour
 
     void Awake()
     {
-        m_VictoryCanvas.gameObject.SetActive(false);
-        m_GameOverCanvas.gameObject.SetActive(false);
-
-        HealthBar = GameObject.Find("HealthBar");
+		HealthBar = GameObject.Find("HealthBar");
         ManaBar = GameObject.Find("ManaBar");
         StaminaBar = GameObject.Find("StaminaBar");
 
@@ -64,11 +61,9 @@ public class HUD : MonoBehaviour
 
     public void DisplayVictory()
     {
-        m_VictoryCanvas.gameObject.SetActive(true);
     }
 
     public void DisplayGameOver()
     {
-        m_GameOverCanvas.gameObject.SetActive(true);
     }
 }
