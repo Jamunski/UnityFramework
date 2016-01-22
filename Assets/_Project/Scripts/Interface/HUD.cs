@@ -11,9 +11,6 @@ using System.Collections;
 
 public class HUD : MonoBehaviour
 {
-    public Canvas m_VictoryCanvas;
-    public Canvas m_GameOverCanvas;
-
     private GameObject HealthBar;
     private GameObject ManaBar;
     private GameObject StaminaBar;
@@ -24,23 +21,24 @@ public class HUD : MonoBehaviour
 
     private const float MAX_BAR_LENGTH = 2800;
 
-    private Player m_Player;
+    public Player m_Player;
 
     void Awake()
     {
-		HealthBar = GameObject.Find("HealthBar");
-        ManaBar = GameObject.Find("ManaBar");
-        StaminaBar = GameObject.Find("StaminaBar");
+		HealthBar = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/HealthBar");
+		ManaBar = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/ManaBar");
+		StaminaBar = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/StaminaBar");
 
-        HealthPool = GameObject.Find("HealthPool");
-        ManaPool = GameObject.Find("ManaPool");
-        StaminaPool = GameObject.Find("StaminaPool");
+		HealthPool = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/HealthBar/HealthPool");
+		ManaPool = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/ManaBar/ManaPool");
+		StaminaPool = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/StaminaBar/StaminaPool");
 
-        m_Player = GameObject.FindObjectOfType<Player>(); // Only works for one player...
+        //m_Player = GameObject.FindObjectOfType<Player>(); // Only works for one player...
     }
 
     public void UpdatePools()
     {
+		//TODO: Fix Divide by zero here...
         HealthPool.transform.localScale = new Vector3(m_Player.m_PlayerStatistics.Pools.m_Health / m_Player.m_PlayerStatistics.Stats.HealthTotal, 1.0f, 0.0f);
         ManaPool.transform.localScale = new Vector3(m_Player.m_PlayerStatistics.Pools.m_Mana / m_Player.m_PlayerStatistics.Stats.ManaTotal, 1.0f, 0.0f);
         StaminaPool.transform.localScale = new Vector3(m_Player.m_PlayerStatistics.Pools.m_Stamina / m_Player.m_PlayerStatistics.Stats.StaminaTotal, 1.0f, 0.0f);

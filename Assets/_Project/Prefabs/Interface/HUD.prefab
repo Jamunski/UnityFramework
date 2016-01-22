@@ -588,7 +588,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 121496}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -100}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 22452562}
@@ -1489,8 +1489,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d7bc76e898710848ac681ab7e2329aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_VictoryCanvas: {fileID: 0}
-  m_GameOverCanvas: {fileID: 0}
+  m_Player: {fileID: 0}
 --- !u!114 &11490144
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1877,9 +1876,9 @@ Canvas:
   m_GameObject: {fileID: 154258}
   m_Enabled: 1
   serializedVersion: 2
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
+  m_PlaneDistance: 0.4
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0

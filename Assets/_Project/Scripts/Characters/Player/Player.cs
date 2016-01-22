@@ -27,9 +27,10 @@ public class Player : MonoBehaviourSubject // Make this inherit from a base clas
 
     public PlayerNumber PlayerNumber;
 
+	public FollowCamera m_Camera;
+
     void Awake()
     {
-        //GameManager.Instance.DontDestroy(gameObject);
         AddObserver(GameManager.Instance);
         m_PlayerInteraction = GetComponentInChildren<PlayerInteraction>();
     }
@@ -43,6 +44,10 @@ public class Player : MonoBehaviourSubject // Make this inherit from a base clas
     void Update()
     {
         UpdateButtonInput();
+		for (int i = 0; i < AchievementManager.Instance.m_AchievementDatabase.achievements.Count; i++)
+		{
+			AchievementManager.Instance.m_AchievementDatabase.achievements[i].CheckConditions();
+		}
     }
 
     void FixedUpdate()

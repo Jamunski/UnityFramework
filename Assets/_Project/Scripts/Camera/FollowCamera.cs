@@ -9,10 +9,10 @@
 using UnityEngine;
 using System.Collections;
 
-public class FollowCamera : MonoBehaviour
+public class FollowCamera : MonoBehaviour, ICamera
 {
 	public GameObject m_Target;
-	public Vector3 m_CameraOffset;
+	public Vector3 m_CameraOffset = new Vector3(0,2,-4);
 	public float m_CameraRotationY;
 	public float m_CameraRotationX;
 
@@ -30,9 +30,6 @@ public class FollowCamera : MonoBehaviour
 		transform.RotateAround(m_Target.transform.position, transform.right, m_CameraRotationX);
 		transform.LookAt(m_Target.transform.position);
 
-		//Vector3 newRot = transform.localEulerAngles;
-		//newRot.x = Mathf.Clamp(newRot.x, 55, 320);
-		//transform.localEulerAngles = newRot;
 
 		Vector3 thing = transform.position - m_Target.transform.position;
 		transform.position = m_Target.transform.position + thing.normalized * m_DistanceFromCamera;

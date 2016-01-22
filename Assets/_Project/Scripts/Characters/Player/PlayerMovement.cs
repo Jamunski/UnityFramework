@@ -22,7 +22,8 @@ public class PlayerMovement : MonoBehaviour
 	{
 		m_Player = gameObject.GetComponent<Player>();
 		m_PlayerRigidBody = GetComponent<Rigidbody>();
-		m_Camera = GameObject.FindWithTag("MainCamera").GetComponent<FollowCamera>();
+		//if (m_Player.m_Camera.GetType() == Fol)
+		m_Camera = m_Player.m_Camera;
 	}
 
 	//public Methods
