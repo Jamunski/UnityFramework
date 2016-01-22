@@ -9,8 +9,11 @@ public class Achievement
 {
 	public string Name;
 	public bool Acquired;
+	public Sprite Image;
 
 	public List<Condition> conditions;
+
+	public UnityEvent OnConditionsMet;
 
 	public Achievement()
 	{
@@ -37,13 +40,10 @@ public class Achievement
 
 	void OnUnlock() // Call in the Achievement List???
 	{
-		//Call all the functions added int the Achievement Editor Window...
-		DoThing();
-	}
+		//Call any functions you would like to occur for every achievement
 
-	void DoThing()
-	{
-		Debug.Log("Jame eater of ass");
+
+		OnConditionsMet.Invoke();
 	}
 
 	[System.Serializable]
@@ -51,6 +51,5 @@ public class Achievement
 	{
 		public string ConditionName;
 		public bool Acquired;
-		public UnityEvent OnConditionMet;
 	}
 }

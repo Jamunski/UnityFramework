@@ -12,20 +12,31 @@ MonoBehaviour:
   m_Name: achievement_database
   m_EditorClassIdentifier: 
   achievements:
-  - Name: Slay James Eater of Ass
+  - Name: Slay Jame, Eater of Ass
     Acquired: 0
+    Image: {fileID: 0}
     conditions:
-    - ConditionName: dss
+    - ConditionName: Summon the Eater of Ass
       Acquired: 0
-      OnConditionMet:
-        m_PersistentCalls:
-          m_Calls: []
-        m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
-    - ConditionName: dss
+    - ConditionName: Devour the Eater of Ass
       Acquired: 0
-      OnConditionMet:
-        m_PersistentCalls:
-          m_Calls: []
-        m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
-          PublicKeyToken=null
+    OnConditionsMet:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+  - Name: Do stuff
+    Acquired: 0
+    Image: {fileID: 0}
+    conditions:
+    - ConditionName: Do one thing
+      Acquired: 0
+    - ConditionName: Do two thing
+      Acquired: 0
+    - ConditionName: Do three thing
+      Acquired: 0
+    OnConditionsMet:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
