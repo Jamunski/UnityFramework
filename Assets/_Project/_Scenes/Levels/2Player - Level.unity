@@ -161,6 +161,12 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8842ecb39f867934b8aef6765ad24383, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &190009409 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 11483320, guid: a6a2c2dc186d226418a595c5e53c2ce3,
+    type: 2}
+  m_PrefabInternal: {fileID: 440842077}
+  m_Script: {fileID: 11500000, guid: 8d7bc76e898710848ac681ab7e2329aa, type: 3}
 --- !u!1001 &440842077
 Prefab:
   m_ObjectHideFlags: 0
@@ -480,6 +486,14 @@ Prefab:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1525943968}
+    - target: {fileID: 11445998, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_HUD
+      value: 
+      objectReference: {fileID: 1443606612}
+    - target: {fileID: 11417538, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_HUD
+      value: 
+      objectReference: {fileID: 1443606612}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
   m_IsPrefabParent: 0
@@ -539,6 +553,12 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 55f12401b50ccd6419f81cb978ab51c9, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &1443606612 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 11483320, guid: a6a2c2dc186d226418a595c5e53c2ce3,
+    type: 2}
+  m_PrefabInternal: {fileID: 1284933449}
+  m_Script: {fileID: 11500000, guid: 8d7bc76e898710848ac681ab7e2329aa, type: 3}
 --- !u!114 &1525943968 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 11429142, guid: 8842ecb39f867934b8aef6765ad24383,
@@ -628,6 +648,14 @@ Prefab:
       propertyPath: EnduranceAccessor
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 11445998, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_HUD
+      value: 
+      objectReference: {fileID: 190009409}
+    - target: {fileID: 11417538, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_HUD
+      value: 
+      objectReference: {fileID: 190009409}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
   m_IsPrefabParent: 0

@@ -29,6 +29,8 @@ public class Player : MonoBehaviourSubject // Make this inherit from a base clas
 
 	public FollowCamera m_Camera;
 
+	public HUD m_HUD;
+
     void Awake()
     {
         AddObserver(GameManager.Instance);
@@ -44,10 +46,6 @@ public class Player : MonoBehaviourSubject // Make this inherit from a base clas
     void Update()
     {
         UpdateButtonInput();
-		for (int i = 0; i < AchievementManager.Instance.m_AchievementDatabase.achievements.Count; i++)
-		{
-			AchievementManager.Instance.m_AchievementDatabase.achievements[i].CheckConditions();
-		}
     }
 
     void FixedUpdate()
@@ -57,7 +55,7 @@ public class Player : MonoBehaviourSubject // Make this inherit from a base clas
 
     void UpdateButtonInput()
     {
-        if (m_PlayerStatistics.Pools.m_Health > 0) //Probable temp???
+        if (m_PlayerStatistics.m_Pools.Health > 0) //Probable temp???
         {
             // Button Input
             if (m_PlayerInput.Interact() != 0) { Interact(); }
@@ -79,7 +77,7 @@ public class Player : MonoBehaviourSubject // Make this inherit from a base clas
 
     void UpdateMovementInput()
     {
-        if (m_PlayerStatistics.Pools.m_Health > 0) //Probable temp???
+        if (m_PlayerStatistics.m_Pools.Health > 0) //Probable temp???
         {
             // Movement
             if (m_PlayerInput.Movement().magnitude != 0) { Movement(new Vector3(m_PlayerInput.Movement().x, m_PlayerInput.Movement().y, 0.0f)); }

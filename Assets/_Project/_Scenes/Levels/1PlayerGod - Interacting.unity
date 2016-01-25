@@ -85,6 +85,12 @@ NavMeshSettings:
     cellSize: 0.16666667
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &213872316 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 11483320, guid: a6a2c2dc186d226418a595c5e53c2ce3,
+    type: 2}
+  m_PrefabInternal: {fileID: 960291266}
+  m_Script: {fileID: 11500000, guid: 8d7bc76e898710848ac681ab7e2329aa, type: 3}
 --- !u!1 &288300021 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 178080, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
@@ -290,6 +296,50 @@ Prefab:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1042405376}
+    - target: {fileID: 11417538, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_HUD
+      value: 
+      objectReference: {fileID: 213872316}
+    - target: {fileID: 11445998, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_ConstitutionAccessor
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11445998, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_SpiritAccessor
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11445998, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_EnduranceAccessor
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11445998, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_PhysiqueAccessor
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11445998, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_StrengthAccessor
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11445998, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_DexterityAccessor
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11445998, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_InteligenceAccessor
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11445998, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_FaithAccessor
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11445998, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_MemoryAccessor
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 11445998, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: m_WillpowerAccessor
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
   m_IsPrefabParent: 0

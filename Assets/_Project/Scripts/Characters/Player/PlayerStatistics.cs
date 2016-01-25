@@ -11,51 +11,94 @@ using System.Collections;
 
 //Attributes are modifiers for values which will be used in calculations such as damage given and taken, etc...
 //Attributes are modifiable and visible to the player...
-public struct PlayerAttributes
+public struct General
 {
-	public int Strength; // Blunt damage modifier, Effects Load
-	public int Dexterity; // Sharp damage modifier, Effects something
-	public int Intelligence; // Modifier for Magic effectiveness
-	public int Physique; // Stamina drain modifier, Effects Burden
+	public string Name;
+	public string Gender;
+	public string Class;
+	public int Wisdom;
+}
+
+public struct Attributes
+{
 	public int Constitution; // Modifier for Health pool
 	public int Spirit; // Modifier for Mana pool
 	public int Endurance; // Modifier for Stamina pool
+	public int Physique; // Stamina drain modifier, Effects Burden
+	public int Strength; // Blunt damage modifier, Effects Load
+	public int Dexterity; // Sharp damage modifier, Effects something
+	public int Intelligence; // Modifier for Magic effectiveness
+	public int Faith;
+	public int Memory;
+	public int Willpower;
 }
 
 //I unno yet...
-public struct PlayerStats
+public struct Derived
 {
 	public int Speed;
+	public float LoadTotal; //Max Carry Weight
+	public float BurdenTotal; //Max Equip Weight
 	public int HealthTotal;
 	public int ManaTotal;
 	public int StaminaTotal;
-	public float LoadTotal; //Max Carry Weight
-	public float BurdenTotal; //Max Equip Weight
+	public int Sanity;
+
+	//Physical
+	public int BluntResistance;
+	public int SharpResistance;
+	public int ThrustResistance;
+	//Elemental
+	public int FireResistance;
+	public int FrostResistance;
+	public int LightningResistance;
+	public int WindResistance;
+	//Fabricated
+	public int CorruptionResistance;
+	public int DivineResistance;
+	public int ArcaneResistance;
+
+	//Physical
+	public int BluntOffense;
+	public int SharpOffense;
+	public int ThrustOffense;
+	//Elemental
+	public int FireOffense;
+	public int FrostOffense;
+	public int LightningOffense;
+	public int WindOffense;
+	//Fabricated
+	public int CorruptionOffense;
+	public int DivineOffense;
+	public int ArcaneOffense;
 }
 
 //Player visible pools which values can fluctuate and need to be calculated... Calculated based on the Player Attributes...
 public struct PlayerPools
 {
-	public float m_Health;
-	public float m_Mana;
-	public float m_Stamina;
-	public float m_Load;
-	public float m_Burden;
+	public float Health;
+	public float Mana;
+	public float Stamina;
+	public float Load;
+	public float Burden;
 }
 
 public class PlayerStatistics : MonoBehaviour
 {
 	//TEMPORARY ATTRIBUTE ACCESSORS!!!                     ///////// PLEASE DELETE ME!!
-	public int StrengthAccessor;
-	public int DexterityAccessor;
-	public int SpiritAccessor;
-	public int PhysiqueAccessor;
-	public int ConstitutionAccessor;
-	public int InteligenceAccessor;
-	public int EnduranceAccessor;
+	public int m_ConstitutionAccessor;
+	public int m_SpiritAccessor;
+	public int m_EnduranceAccessor;
+	public int m_PhysiqueAccessor;
+	public int m_StrengthAccessor;
+	public int m_DexterityAccessor;
+	public int m_InteligenceAccessor;
+	public int m_FaithAccessor;
+	public int m_MemoryAccessor;
+	public int m_WillpowerAccessor;
 
 	//REFERENCES
-	private HUD m_HUD;
+	private Player m_Player;
 
 	//POOL STARTS
 	private const float HEALTH_START = 120.5f;
@@ -74,14 +117,14 @@ public class PlayerStatistics : MonoBehaviour
 	private const float BURDEN_MODIFIER = 2.7f;
 
 	//NON CONSTANT MODIFIERS
-	private float SpeedModifier; // Based off the Load and Burden effects...
+	private float m_SpeedModifier; // Based off the Load and Burden effects...
 
 	//MAIN ATTRIBUTES
-	public PlayerAttributes Attributes = new PlayerAttributes();
+	public Attributes m_Attributes = new Attributes();
 	//POOLS
-	public PlayerPools Pools = new PlayerPools();
+	public PlayerPools m_Pools = new PlayerPools();
 	//STATISTICS
-	public PlayerStats Stats = new PlayerStats();
+	public Derived m_Stats = new Derived();
 
 	//Don't know really
 	public bool m_IsSprinting;
@@ -91,14 +134,14 @@ public class PlayerStatistics : MonoBehaviour
 	//Unity Callbacks
 	void Start()
 	{
+		m_Player = gameObject.GetComponent<Player>();
 		InitializeAttributes();
 		InitializeStats();
 		InitializePools();
-		m_HUD = GameObject.FindObjectOfType<HUD>();
-		if (m_HUD != null)
+		if (m_Player.m_HUD != null)
 		{
-			m_HUD.UpdateBars();
-			m_HUD.UpdatePools();
+			m_Player.m_HUD.UpdateBars();
+			m_Player.m_HUD.UpdatePools();
 		}
 	}
 
@@ -107,9 +150,9 @@ public class PlayerStatistics : MonoBehaviour
 		//Temp//////
 		InitializeAttributes();
 		InitializeStats();
-		if (m_HUD != null)
+		if (m_Player.m_HUD != null)
 		{
-			m_HUD.UpdateBars();
+			m_Player.m_HUD.UpdateBars();
 		}
 		///////////
 	}
@@ -117,32 +160,32 @@ public class PlayerStatistics : MonoBehaviour
 	//private Methods
 	private void InitializeAttributes()
 	{
-		Attributes.Strength = StrengthAccessor;
-		Attributes.Dexterity = DexterityAccessor;
-		Attributes.Intelligence = SpiritAccessor;
-		Attributes.Physique = PhysiqueAccessor;
-		Attributes.Constitution = ConstitutionAccessor;
-		Attributes.Spirit = InteligenceAccessor;
-		Attributes.Endurance = EnduranceAccessor;
+		m_Attributes.Strength = m_StrengthAccessor;
+		m_Attributes.Dexterity = m_DexterityAccessor;
+		m_Attributes.Intelligence = m_SpiritAccessor;
+		m_Attributes.Physique = m_PhysiqueAccessor;
+		m_Attributes.Constitution = m_ConstitutionAccessor;
+		m_Attributes.Spirit = m_InteligenceAccessor;
+		m_Attributes.Endurance = m_EnduranceAccessor;
 	}
 
 	private void InitializeStats()
 	{
-		Stats.Speed = 15;
-		Stats.HealthTotal = (int)(Mathf.Floor(Attributes.Constitution * HEALTH_MODIFIER) + HEALTH_START);
-		Stats.ManaTotal = (int)(Mathf.Floor(Attributes.Spirit * MANA_MODIFIER) + MANA_START);
-		Stats.StaminaTotal = (int)(Mathf.Floor(Attributes.Endurance * STAMINA_MODIFIER) + STAMINA_START);
-		Stats.LoadTotal = (int)Mathf.Floor(Attributes.Strength * LOAD_MODIFIER + LOAD_START);
-		Stats.BurdenTotal = (int)Mathf.Floor(Attributes.Physique * BURDEN_MODIFIER + BURDEN_START);
+		m_Stats.Speed = 15;
+		m_Stats.HealthTotal = (int)(Mathf.Floor(m_Attributes.Constitution * HEALTH_MODIFIER) + HEALTH_START);
+		m_Stats.ManaTotal = (int)(Mathf.Floor(m_Attributes.Spirit * MANA_MODIFIER) + MANA_START);
+		m_Stats.StaminaTotal = (int)(Mathf.Floor(m_Attributes.Endurance * STAMINA_MODIFIER) + STAMINA_START);
+		m_Stats.LoadTotal = (int)Mathf.Floor(m_Attributes.Strength * LOAD_MODIFIER + LOAD_START);
+		m_Stats.BurdenTotal = (int)Mathf.Floor(m_Attributes.Physique * BURDEN_MODIFIER + BURDEN_START);
 	}
 
 	private void InitializePools()
 	{
-		Pools.m_Health = Stats.HealthTotal;
-		Pools.m_Stamina = Stats.StaminaTotal;
-		Pools.m_Mana = Stats.ManaTotal;
-		Pools.m_Load = Stats.LoadTotal;
-		Pools.m_Burden = Stats.BurdenTotal;
+		m_Pools.Health = m_Stats.HealthTotal;
+		m_Pools.Stamina = m_Stats.StaminaTotal;
+		m_Pools.Mana = m_Stats.ManaTotal;
+		m_Pools.Load = m_Stats.LoadTotal;
+		m_Pools.Burden = m_Stats.BurdenTotal;
 	}
 
 	//public Methods
@@ -164,8 +207,8 @@ public class PlayerStatistics : MonoBehaviour
 	public void CalculateSpeed()
 	{
 		//NOT SURE YET... Needs more work...
-		m_SprintSpeed = Stats.Speed * SPRINT_MODIFIER;
-		m_FinalSpeed = Stats.Speed;
+		m_SprintSpeed = m_Stats.Speed * SPRINT_MODIFIER;
+		m_FinalSpeed = m_Stats.Speed;
 		if (m_IsSprinting)
 		{
 			m_FinalSpeed = m_SprintSpeed;
@@ -190,29 +233,29 @@ public class PlayerStatistics : MonoBehaviour
 			switch (aDamageType)
 			{
 				case DamageType.normal:
-					if (Pools.m_Health > 0)
+					if (m_Pools.Health > 0)
 					{
-						Pools.m_Health -= aDamageDealt;
+						m_Pools.Health -= aDamageDealt;
 					}
 					else
 					{
-						Pools.m_Health = 0;
-						m_HUD.DisplayGameOver();
+						m_Pools.Health = 0;
+						m_Player.m_HUD.DisplayGameOver();
 					}
 					break;
 				case DamageType.other:
-					if (Pools.m_Health > 0)
+					if (m_Pools.Health > 0)
 					{
-						Pools.m_Health -= aDamageDealt;
+						m_Pools.Health -= aDamageDealt;
 					}
 					else
 					{
-						Pools.m_Health = 0;
-						m_HUD.DisplayGameOver();
+						m_Pools.Health = 0;
+						m_Player.m_HUD.DisplayGameOver();
 					}
 					break;
 			}
-			m_HUD.UpdatePools();
+			m_Player.m_HUD.UpdatePools();
 		}
 		catch
 		{

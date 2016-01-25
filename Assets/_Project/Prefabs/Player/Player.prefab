@@ -268,7 +268,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 127460}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -43, y: 1, z: -43}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 430774}
@@ -576,8 +576,9 @@ MonoBehaviour:
   m_PlayerInput: {fileID: 0}
   m_PlayerInventory: {fileID: 0}
   m_PlayerInteraction: {fileID: 0}
-  PlayerNumber: 0
+  PlayerNumber: 1
   m_Camera: {fileID: 0}
+  m_HUD: {fileID: 0}
 --- !u!114 &11436694
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -602,13 +603,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c3494711be0ef84dbdb76d9ddf63f22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StrengthAccessor: 4
-  DexterityAccessor: 4
-  SpiritAccessor: 4
-  PhysiqueAccessor: 4
-  ConstitutionAccessor: 4
-  InteligenceAccessor: 4
-  EnduranceAccessor: 4
+  m_ConstitutionAccessor: 4
+  m_SpiritAccessor: 4
+  m_EnduranceAccessor: 4
+  m_PhysiqueAccessor: 4
+  m_StrengthAccessor: 4
+  m_DexterityAccessor: 4
+  m_InteligenceAccessor: 4
+  m_FaithAccessor: 4
+  m_MemoryAccessor: 4
+  m_WillpowerAccessor: 4
   m_IsSprinting: 0
 --- !u!114 &11493858
 MonoBehaviour:
