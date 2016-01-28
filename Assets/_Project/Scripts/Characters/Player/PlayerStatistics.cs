@@ -160,13 +160,16 @@ public class PlayerStatistics : MonoBehaviour
 	//private Methods
 	private void InitializeAttributes()
 	{
-		m_Attributes.Strength = m_StrengthAccessor;
-		m_Attributes.Dexterity = m_DexterityAccessor;
-		m_Attributes.Intelligence = m_SpiritAccessor;
-		m_Attributes.Physique = m_PhysiqueAccessor;
 		m_Attributes.Constitution = m_ConstitutionAccessor;
 		m_Attributes.Spirit = m_InteligenceAccessor;
 		m_Attributes.Endurance = m_EnduranceAccessor;
+		m_Attributes.Physique = m_PhysiqueAccessor;
+		m_Attributes.Strength = m_StrengthAccessor;
+		m_Attributes.Dexterity = m_DexterityAccessor;
+		m_Attributes.Intelligence = m_SpiritAccessor;
+		m_Attributes.Faith = m_FaithAccessor;
+		m_Attributes.Memory = m_MemoryAccessor;
+		m_Attributes.Willpower = m_WillpowerAccessor;
 	}
 
 	private void InitializeStats()
@@ -215,17 +218,22 @@ public class PlayerStatistics : MonoBehaviour
 		}
 	}
 
-	public void CalculateMana() //Called when mana is to be consumed, regeneration should be considered before implementing this class...
+	//Called when mana is to be consumed, regeneration should be considered before implementing this class...
+	public void CalculateMana() 
 	{
 		//Not sure how this will work yet, likely need spells to be implemented before this...
 	}
 
-	public void CalculateStamina()// pass the action delt and handle the stamina calculation using that value
+	// pass the action delt and handle the stamina calculation using that value. 
+	// Action passed willl be an action object which inherits from an action interface, 
+	// the interface will contain values such as stamina consumption, this way each action won't need a special case.
+	public void CalculateStamina()
 	{
 		//Not sure how this will work yet...
 		//REQUIRES BURDEN IN ORDER TO BE FULLY IMPLEMENTED!!! :O
 	}
 
+	//Should be changed to calculate life, this function would then be used for all cases in which health pools are changed
 	public void CalculateDamage(GameObject aDamager, float aDamageDealt, DamageType aDamageType = DamageType.normal) //GameObject dealing damage, Damage, DamageType
 	{
 		try

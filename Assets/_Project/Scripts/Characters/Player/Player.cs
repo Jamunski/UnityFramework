@@ -31,6 +31,7 @@ public class Player : MonoBehaviourSubject // Make this inherit from a base clas
 
 	public HUD m_HUD;
 
+	//Unity Callbacks
     void Awake()
     {
         AddObserver(GameManager.Instance);
@@ -53,7 +54,8 @@ public class Player : MonoBehaviourSubject // Make this inherit from a base clas
         UpdateMovementInput();
     }
 
-    void UpdateButtonInput()
+	// private Methods
+    private void UpdateButtonInput()
     {
         if (m_PlayerStatistics.m_Pools.Health > 0) //Probable temp???
         {
@@ -75,7 +77,7 @@ public class Player : MonoBehaviourSubject // Make this inherit from a base clas
         if (m_PlayerInput.Help() != 0) { Help(); }
     }
 
-    void UpdateMovementInput()
+    private void UpdateMovementInput()
     {
         if (m_PlayerStatistics.m_Pools.Health > 0) //Probable temp???
         {

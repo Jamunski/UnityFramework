@@ -11,6 +11,7 @@ using System.Collections;
 
 public class HUD : MonoBehaviour
 {
+	// private Member Variables
 	private GameObject HealthBar;
 	private GameObject ManaBar;
 	private GameObject StaminaBar;
@@ -21,8 +22,11 @@ public class HUD : MonoBehaviour
 
 	private const float MAX_BAR_LENGTH = 2800;
 
+	// public Member Variables
 	public Player m_Player;
 
+
+	// Unity Callbacks
 	void Awake()
 	{
 		HealthBar = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/HealthBar");
@@ -32,15 +36,11 @@ public class HUD : MonoBehaviour
 		HealthPool = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/HealthBar/HealthPool");
 		ManaPool = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/ManaBar/ManaPool");
 		StaminaPool = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/StaminaBar/StaminaPool");
-
-		//m_Player = GameObject.FindObjectOfType<Player>(); // Only works for one player...
 	}
 
+	// public Methods
 	public void UpdatePools()
 	{
-		Debug.Log(m_Player.name);
-		Debug.Log(m_Player.m_PlayerStatistics.m_Stats.HealthTotal + " " + gameObject.name);
-		//TODO: Fix Divide by zero here...
 		if (m_Player.m_PlayerStatistics.m_Stats.HealthTotal != 0)
 		{
 			HealthPool.transform.localScale = new Vector3(m_Player.m_PlayerStatistics.m_Pools.Health / m_Player.m_PlayerStatistics.m_Stats.HealthTotal, 1.0f, 0.0f);
@@ -51,15 +51,9 @@ public class HUD : MonoBehaviour
 
 	public void UpdateBars()
 	{
-		//Scale the bars based on the max values of each pool... bar caps at 2800...
-		//HealthBar.transform.localScale = new Vector3(m_Player.m_PlayerStatistics.Stats.HealthTotal / MAX_BAR_LENGTH, 1.0f, 0.0f);
-
-		//HealthBar.GetComponent<RectTransform>().sizeDelta = new Vector2((m_Player.m_PlayerStatistics.Stats.HealthTotal / MAX_BAR_LENGTH * 540) - 540, 0);
-
 		HealthBar.GetComponent<RectTransform>().sizeDelta = new Vector2(m_Player.m_PlayerStatistics.m_Stats.HealthTotal / MAX_BAR_LENGTH * 540, 0);
 		ManaBar.GetComponent<RectTransform>().sizeDelta = new Vector2(m_Player.m_PlayerStatistics.m_Stats.ManaTotal / MAX_BAR_LENGTH * 540, 0);
 		StaminaBar.GetComponent<RectTransform>().sizeDelta = new Vector2(m_Player.m_PlayerStatistics.m_Stats.StaminaTotal / MAX_BAR_LENGTH * 540, 0);
-
 	}
 
 	public void DisplayVictory()
