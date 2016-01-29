@@ -49,9 +49,9 @@ public class MainMenu : MonoBehaviourSubject
         m_EventSystem.SetSelectedGameObject(GameObject.Find("Continue"));
     }
 
-    public void Continue()
+    public void Continue(Object aSceneToLoad)
     {
-        GameManager.Instance.m_SceneToLoad = "8Player - Level";
+        GameManager.Instance.m_SceneToLoad = aSceneToLoad.name;
         Notify(gameObject, GameEvent.LoadingScene);
     }
 
