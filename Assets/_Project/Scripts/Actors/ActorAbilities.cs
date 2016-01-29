@@ -10,20 +10,18 @@
 using UnityEngine;
 using System.Collections;
 
-public class PlayerAbilities : MonoBehaviour
+public class ActorAbilities : MonoBehaviour
 {
-    private PlayerStatistics m_Stats;
-    private IWeapon m_Weapon;
+    private ActorStatistics m_Stats;
 
     void Start()
     {
-        m_Stats = GetComponent<Player>().m_PlayerStatistics;
-        m_Weapon = GetComponentInChildren<IWeapon>();
+        m_Stats = GetComponent<Actor>().m_Statistics;
     }
 
     public void Jump()
     {
-        Debug.Log(gameObject.name + ": Jumping");
+        Debug.Log(gameObject.name + ": Jump");
     }
 
     public void Sprint()
@@ -34,12 +32,7 @@ public class PlayerAbilities : MonoBehaviour
 
     public void Attack()
     {
-        if (m_Weapon != null)
-        {
-            m_Weapon.Attack();
-            return;
-        }
-        Debug.Log(gameObject.name + ": WeaponNull");
+        Debug.Log(gameObject.name + ": Attack");
     }
 
     public void Magic()

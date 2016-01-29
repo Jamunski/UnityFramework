@@ -13,47 +13,37 @@ public class HUD : MonoBehaviour
 {
 	// private Member Variables
 	private GameObject HealthBar;
-	private GameObject ManaBar;
-	private GameObject StaminaBar;
-
 	private GameObject HealthPool;
-	private GameObject ManaPool;
-	private GameObject StaminaPool;
 
-	private const float MAX_BAR_LENGTH = 2800;
+	private const float MAX_BAR_LENGTH = 200;
+	private const float HEALTH_MAX = 100.0f;
 
 	// public Member Variables
-	public Player m_Player;
-
+	public Actor m_Actor;
 
 	// Unity Callbacks
 	void Awake()
 	{
-		HealthBar = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/HealthBar");
-		ManaBar = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/ManaBar");
-		StaminaBar = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/StaminaBar");
+		HealthBar = GameObject.Find(gameObject.name + "/TopLeft/HealthBar");
 
-		HealthPool = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/HealthBar/HealthPool");
-		ManaPool = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/ManaBar/ManaPool");
-		StaminaPool = GameObject.Find(gameObject.name + "/HUDcanvas/TopLeft/StaminaBar/StaminaPool");
+		HealthPool = GameObject.Find(gameObject.name + "/TopLeft/HealthBar/HealthPool");
+	}
+
+	public void InitializeBars()
+	{
+		Debug.Log(HealthBar);
+		HealthBar.GetComponent<RectTransform>().sizeDelta = new Vector2(HEALTH_MAX / MAX_BAR_LENGTH * 540, 0);
 	}
 
 	// public Methods
-	public void UpdatePools()
-	{
-		if (m_Player.m_PlayerStatistics.m_Stats.HealthTotal != 0)
-		{
-			HealthPool.transform.localScale = new Vector3(m_Player.m_PlayerStatistics.m_Pools.Health / m_Player.m_PlayerStatistics.m_Stats.HealthTotal, 1.0f, 0.0f);
-			ManaPool.transform.localScale = new Vector3(m_Player.m_PlayerStatistics.m_Pools.Mana / m_Player.m_PlayerStatistics.m_Stats.ManaTotal, 1.0f, 0.0f);
-			StaminaPool.transform.localScale = new Vector3(m_Player.m_PlayerStatistics.m_Pools.Stamina / m_Player.m_PlayerStatistics.m_Stats.StaminaTotal, 1.0f, 0.0f);
-		}
-	}
-
 	public void UpdateBars()
 	{
-		HealthBar.GetComponent<RectTransform>().sizeDelta = new Vector2(m_Player.m_PlayerStatistics.m_Stats.HealthTotal / MAX_BAR_LENGTH * 540, 0);
-		ManaBar.GetComponent<RectTransform>().sizeDelta = new Vector2(m_Player.m_PlayerStatistics.m_Stats.ManaTotal / MAX_BAR_LENGTH * 540, 0);
-		StaminaBar.GetComponent<RectTransform>().sizeDelta = new Vector2(m_Player.m_PlayerStatistics.m_Stats.StaminaTotal / MAX_BAR_LENGTH * 540, 0);
+		HealthBar.GetComponent<RectTransform>().sizeDelta = new Vector2(HEALTH_MAX / MAX_BAR_LENGTH * 540, 0);
+	}
+
+	public void UpdatePools()
+	{
+		HealthPool.transform.localScale = new Vector3(m_Actor.m_Statistics.m_Pools.Health / HEALTH_MAX, 1.0f, 0.0f);
 	}
 
 	public void DisplayVictory()

@@ -17,9 +17,9 @@ public class DatabasesWindow : EditorWindow
 
 	void OnGUI()
 	{
-		if (GUILayout.Button("Create Achivement Database"))
+		if (GUILayout.Button("Create somethign Database"))
 		{
-			ScriptableObjectUtility.CreateAsset<AchievementDatabase>();
+			//ScriptableObjectUtility.CreateAsset<AchievementDatabase>();
 		}
 	}
 }

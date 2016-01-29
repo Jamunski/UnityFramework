@@ -37,7 +37,7 @@ public class PauseGame : MonoBehaviourSubject
         {
             m_PauseCanvas.SetActive(true);
             Notify(aPauser, GameEvent.Pausing);
-            m_InputMenu.m_PlayerNumber = aPauser.GetComponent<Player>().PlayerNumber;
+            m_InputMenu.m_PlayerNumber = aPauser.GetComponent<Actor>().PlayerNumber;
         }
         else if (m_PauseCanvas.activeSelf)
         {

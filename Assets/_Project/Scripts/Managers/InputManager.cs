@@ -27,6 +27,7 @@ public enum InputType
 
 public enum PlayerNumber
 {
+	AI = -1, //No need to check input, AI will manage inputs on its own...
     God = 0, //GOD, all Joysticks or Keyboard...
     One,
     Two,

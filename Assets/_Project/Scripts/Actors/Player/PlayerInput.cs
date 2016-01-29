@@ -12,7 +12,7 @@ using System.Collections;
 public class PlayerInput : MonoBehaviour
 {
     public string m_Input;
-    private Player m_Player = null;
+    private Actor m_Player = null;
 
     private bool isInteractPressed;
     private bool isJumpPressed;
@@ -31,7 +31,7 @@ public class PlayerInput : MonoBehaviour
 
     void Awake()
     {
-        m_Player = gameObject.GetComponent<Player>();
+        m_Player = gameObject.GetComponent<Actor>();
     }
 
     //Abstracts

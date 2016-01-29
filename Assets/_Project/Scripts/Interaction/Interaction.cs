@@ -10,17 +10,17 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class PlayerInteraction : MonoBehaviour
+public class Interaction : MonoBehaviour
 {
     public IInteractable current { get; private set; }
     public float InteractionRadius;
     public Vector3 InteractionCenter = new Vector3();
-    private Player m_Player;
+    private Actor m_Actor;
 
     //Unity Callbacks
     void Start()
     {
-        m_Player = GetComponentInParent<Player>();
+        m_Actor = GetComponentInParent<Actor>();
     }
 
     void Update()
@@ -55,9 +55,9 @@ public class PlayerInteraction : MonoBehaviour
         {
             //compare distance between player and interactable objects
             //if current dist is smaller than min dist then store that object in ObjectToInteractWith and set minDist to that value
-            if (minDist > Vector3.Distance(interactables[n].transform.position, m_Player.transform.position))
+            if (minDist > Vector3.Distance(interactables[n].transform.position, m_Actor.transform.position))
             {
-                minDist = Vector3.Distance(interactables[n].transform.position, m_Player.transform.position);
+                minDist = Vector3.Distance(interactables[n].transform.position, m_Actor.transform.position);
                 current = interactables[n].GetComponent<IInteractable>();
                 //Debug.Log("Closest Interactable: " + interactables[n]);
             }

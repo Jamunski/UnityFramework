@@ -16,18 +16,18 @@ public class DamageVolume : MonoBehaviour
     void OnTriggerStay(Collider other)
     {
         //Get the players colliding with the trigger...
-        if (other.GetComponentInParent<Player>())
+        if (other.GetComponentInParent<Actor>())
         {
-            other.GetComponentInParent<Player>().m_PlayerStatistics.CalculateDamage(gameObject, TriggerDamagePerSecond * Time.deltaTime);
+            other.GetComponentInParent<Actor>().m_Statistics.CalculateHealth(gameObject, TriggerDamagePerSecond * Time.deltaTime);
         }
     }
 
     void OnCollisionEnter(Collision other)
     {
         //Get the players colliding with the trigger...
-        if (other.gameObject.GetComponentInParent<Player>())
+        if (other.gameObject.GetComponentInParent<Actor>())
         {
-            other.gameObject.GetComponentInParent<Player>().m_PlayerStatistics.CalculateDamage(gameObject, TriggerDamagePerSecond * Time.deltaTime);
+            other.gameObject.GetComponentInParent<Actor>().m_Statistics.CalculateHealth(gameObject, TriggerDamagePerSecond * Time.deltaTime);
         }
     }
 }

@@ -9,10 +9,10 @@
 using UnityEngine;
 using System.Collections;
 
-public class PlayerMovement : MonoBehaviour
+public class ActorMovement : MonoBehaviour
 {
 	//private Member variables
-	private Player m_Player = null;
+	private Actor m_Player = null;
 	private FollowCamera m_Camera;
 	private Rigidbody m_PlayerRigidBody = null;
 	private float m_RotationSpeed = Mathf.PI * 60;
@@ -20,9 +20,9 @@ public class PlayerMovement : MonoBehaviour
 	//Unity Callbacks
 	void Start()
 	{
-		m_Player = gameObject.GetComponent<Player>();
+		m_Player = gameObject.GetComponent<Actor>();
 		m_PlayerRigidBody = GetComponent<Rigidbody>();
-		//if (m_Player.m_Camera.GetType() == Fol)
+
 		m_Camera = m_Player.m_Camera;
 	}
 
@@ -31,10 +31,9 @@ public class PlayerMovement : MonoBehaviour
 	{
 		try
 		{
-
 			Vector3 velocity = Vector3.zero;
 
-			velocity = (m_Camera.transform.forward * -aInput.y * m_Player.m_PlayerStatistics.m_FinalSpeed);
+			velocity = (m_Camera.transform.forward * -aInput.y * m_Player.m_Statistics.m_FinalSpeed);
 			velocity.y = 0;
 
 			Vector3.Normalize(velocity);
@@ -49,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
 			Debug.Log("No Camera");
 			Vector3 velocity = Vector3.zero;
 
-			velocity = (transform.forward * -aInput.y * m_Player.m_PlayerStatistics.m_FinalSpeed);
+			velocity = (transform.forward * -aInput.y * m_Player.m_Statistics.m_FinalSpeed);
 			velocity.y = 0;
 
 			Vector3.Normalize(velocity);
