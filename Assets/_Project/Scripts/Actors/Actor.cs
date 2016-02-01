@@ -34,6 +34,7 @@ public class Actor : MonoBehaviourSubject
 	//Unity Callbacks
 	void Start()
 	{
+        Debug.Log(InputXBOXControls.RightStickY.ToString());
 		AddObserver(GameManager.Instance);
 		m_Statistics = new ActorStatistics(gameObject.GetComponent<Actor>());
 		if (m_HUD != null)
@@ -67,8 +68,6 @@ public class Actor : MonoBehaviourSubject
 			// Button Input
 			if (m_Input.Interact() != 0) { Interact(); }
 
-			if (m_Input.Jump() != 0) { Jump(); }
-
 			if (m_Input.Sprint() != 0) { Sprint(); }
 			else { m_Statistics.m_IsSprinting = false; m_Statistics.CalculateSpeed(); }
 
@@ -91,7 +90,9 @@ public class Actor : MonoBehaviourSubject
 
 			// Camera
 			if (m_Input.Camera().magnitude != 0) { Camera(new Vector3(m_Input.Camera().x, m_Input.Camera().y, 0.0f)); }
-		}
+
+            if (m_Input.Jump() != 0) { Jump(); }
+        }
 	}
 
 	//private Methods

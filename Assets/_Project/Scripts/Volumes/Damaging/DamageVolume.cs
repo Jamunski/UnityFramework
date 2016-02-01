@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class DamageVolume : MonoBehaviour
+public class DamageVolume : MonoBehaviourSubject
 {
     public float TriggerDamagePerSecond;
 

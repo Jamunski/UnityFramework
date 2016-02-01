@@ -1,8 +1,5 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using UnityEngine.Events;
-using System.Collections.Generic;
-using System;
 
 public class DatabasesWindow : EditorWindow
 {
@@ -17,9 +14,13 @@ public class DatabasesWindow : EditorWindow
 
 	void OnGUI()
 	{
-		if (GUILayout.Button("Create somethign Database"))
+		if (GUILayout.Button("Create Achievement Database"))
 		{
-			//ScriptableObjectUtility.CreateAsset<AchievementDatabase>();
+			ScriptableObjectUtility.CreateAsset<AchievementDatabase>();
 		}
-	}
+        if (GUILayout.Button("Create InputObject Database"))
+        {
+            ScriptableObjectUtility.CreateAsset<InputObjectDatabase>();
+        }
+    }
 }

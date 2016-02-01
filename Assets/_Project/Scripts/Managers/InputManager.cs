@@ -11,23 +11,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-public enum InputState
-{
-    Menu = 0,
-    CharacterSelect,
-    Gameplay
-}
 
-public enum InputType
+public enum InputPeripheral
 {
     Joystick = 0,
     Keyboard,
     AI
 }
 
+public enum InputType
+{
+    Tap = 0,
+    DoubleTap,
+    Hold,
+    Toggle
+}
+
 public enum PlayerNumber
 {
-	AI = -1, //No need to check input, AI will manage inputs on its own...
+    AI = -1, //No need to check input, AI will manage inputs on its own...
     God = 0, //GOD, all Joysticks or Keyboard...
     One,
     Two,
@@ -39,12 +41,13 @@ public enum PlayerNumber
     Eight
 }
 
-[Serializable]
-public struct InputStrings
+public class InputStrings
 {
-    public InputType InputType;
+    public InputPeripheral InputType;
     public PlayerNumber PlayerNumber;
     public int JoystickNumber;
+
+
 
     public string MoveXInput;
     public string MoveYInput;
@@ -59,6 +62,8 @@ public struct InputStrings
 
     public string PauseInput;
     public string HelpInput;
+
+
 }
 
 public enum InputXBOXControls
@@ -93,49 +98,18 @@ public class InputManager : Observer
 {
     // private members
     private static InputManager instance;
-    //private InputState m_CurrentState;
-
-    private const int NUMBER_OF_XBOX_INPUT_AXES = (int)InputXBOXControls.RightTrigger + 1;
-    private const int NUMBER_OF_PC_INPUT_AXES = (int)InputPCControls.DownArrow + 1;
 
     private Dictionary<string, InputPCControls> m_PCControls = new Dictionary<string, InputPCControls>();
     private Dictionary<string, InputXBOXControls> m_XBOXControls = new Dictionary<string, InputXBOXControls>();
 
     //public members
-    public string[] InputXBOXControlsArray { get; private set; }
-    public string[] InputPCControlsArray { get; private set; }
+    public InputConfig[] m_InputConfigs { get; private set; }
 
     public InputStrings[] m_InputStrings { get; private set; }
-
-    public InputState m_State;
 
     public string m_InputValueStorred;
 
     public int m_ControllersConnected { get; private set; }
-
-    private InputManager()
-    {
-        m_State = new InputState();
-        m_InputStrings = new InputStrings[9]; // There is a maximum of 8 player support, 0 is God element
-        m_ControllersConnected = GetNumControllersConnected();
-
-
-        InitializeInputArrays();
-        InitializeDictionaries();
-        InitializePlayerNumbers();
-
-        if (m_ControllersConnected == 0)           /////////////TEMPORARY PLEASE DELETE ME!!!!!!!!!
-        {
-            m_InputStrings[0].InputType = InputType.Keyboard;
-            m_InputStrings[1].InputType = InputType.Keyboard;
-        }
-
-        for (int i = 0; i < m_InputStrings.Length; i++)
-        {
-            ReInitializeInputStrings(ref m_InputStrings[i]);
-        }
-        SetPlayerControllerNumbers();
-    }
 
     public static InputManager Instance
     {
@@ -146,8 +120,22 @@ public class InputManager : Observer
         }
     }
 
-    public void OnInputChanged()
+    private InputManager()
     {
+        m_InputStrings = new InputStrings[9]; // There is a maximum of 8 player support, 0 is God element
+        m_InputConfigs = new InputConfig[9]; // There is a maximum of 8 player support, 0 is God element
+
+        m_ControllersConnected = GetNumControllersConnected();
+
+        InitializeDictionaries();
+        InitializePlayerNumbers();
+
+        if (m_ControllersConnected == 0)           /////////////TEMPORARY PLEASE DELETE ME!!!!!!!!!
+        {
+            m_InputStrings[0].InputType = InputPeripheral.Keyboard;
+            m_InputStrings[1].InputType = InputPeripheral.Keyboard;
+        }
+
         for (int i = 0; i < m_InputStrings.Length; i++)
         {
             ReInitializeInputStrings(ref m_InputStrings[i]);
@@ -155,30 +143,19 @@ public class InputManager : Observer
         SetPlayerControllerNumbers();
     }
 
+    private void InitializeInputConfigs()
+    {
+        //m_InputConfigs
+    }
+
+    private void InitialiseInputObjects()
+    {
+        //Go through the InputObj_Database and get the values.....
+    }
+
     private int GetNumControllersConnected()
     {
         return Input.GetJoystickNames().Length;
-    }
-
-    public void SetPlayerControllerNumbers()
-    {
-        //Only set a controller number to an element containing InputType.Joystick
-        //Iterate through all the elements of m_InputStrings and collect all of the elements with InputType.Joystick
-        int controllersAssigned = 0;
-
-        for (int i = 0; i < m_InputStrings.Length; i++)
-        {
-            if (m_InputStrings[i].InputType == InputType.Joystick)
-            {
-                if (m_InputStrings[i].PlayerNumber != PlayerNumber.God)
-                {
-                    m_InputStrings[i].JoystickNumber = ++controllersAssigned;
-                }
-            }
-        }
-        //Go through all the elements containing InputType.Joystick and in order from player1 - 8 set their Controller numbers.
-        //Set the numbers regardless of if there are any joysticks connected.
-        //If there are no Joysticks connected another function will handle setting all players not set to keyboard to AI
     }
 
     private void InitializeDictionaries()
@@ -423,36 +400,45 @@ public class InputManager : Observer
         #endregion
     }
 
-    protected void InitializeInputArrays()
-    {
-        InputXBOXControlsArray = new string[NUMBER_OF_XBOX_INPUT_AXES] 
-        {
-            "A", "B", "X", "Y", // Face Buttons
-            "LeftBumper", "RightBumper", // Bumpers
-            "Back", "Start", // Options
-            "LeftStickClick", "RightStickClick", // Stick Clicks
-            "LeftStickX", "LeftStickY", "RightStickX", "RightStickY", // Stick Axes
-            "DpadX", "DpadY", // Dpad Axes
-            "LeftTrigger", "RightTrigger" // Triggers
-        };
 
-        InputPCControlsArray = new string[NUMBER_OF_PC_INPUT_AXES]
+
+
+
+
+
+
+
+    public void OnInputChanged()
+    {
+        for (int i = 0; i < m_InputStrings.Length; i++)
         {
-            "MouseX", "MouseY", "MouseScrollWheel", "MouseLeftClick", "MouseRightClick", "MouseMiddleMouse", "Mouse3", "Mouse4", "Mouse5", "Mouse6", // Mouse
-            "Escape", "Tab", "CapsLock", "LeftShift", "LeftControl", "LeftAlt", // Left
-            "Space", "RightAlt", "RightShift", "Return", // Right
-            "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
-            "BackQuote", "Alpha0", "Alpha1", "Alpha2", "Alpha3", "Alpha4", "Alpha5", "Alpha6", "Alpha7", "Alpha8", "Alpha9", // Top Row Numbers
-            "Minus", "Equals", "Backspace",
-            "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "A", "S", "D", "F", "G", "H", "J", "K", "L", "Z", "X", "C", "V", "B", "N", "M", // Characters
-            "LeftSquareBracket", "RightSquareBracket", "Backslash", "Semicolon", "Quote", "Comma", "Period", "Slash",
-            "Insert", "Delete", "Home", "End", "PageUp", "PageDown",
-            "Keypad0", "Keypad1", "Keypad2", "Keypad3", "Keypad4", "Keypad5", "Keypad6", "Keypad7", "Keypad8", "Keypad9",
-            "KeypadPeriod", "KeypadEnter", "KeypadPlus", "KeypadMinus", "KeypadMultiply", "KeypadDivide", "NumLock",
-            "MoveX", "MoveY",
-            "LeftArrow", "RightArrow", "UpArrow", "DownArrow" // Arrow Keys
-        };
+            ReInitializeInputStrings(ref m_InputStrings[i]);
+        }
+        SetPlayerControllerNumbers();
     }
+
+
+    public void SetPlayerControllerNumbers()
+    {
+        //Only set a controller number to an element containing InputType.Joystick
+        //Iterate through all the elements of m_InputStrings and collect all of the elements with InputType.Joystick
+        int controllersAssigned = 0;
+
+        for (int i = 0; i < m_InputStrings.Length; i++)
+        {
+            if (m_InputStrings[i].InputType == InputPeripheral.Joystick)
+            {
+                if (m_InputStrings[i].PlayerNumber != PlayerNumber.God)
+                {
+                    m_InputStrings[i].JoystickNumber = ++controllersAssigned;
+                }
+            }
+        }
+        //Go through all the elements containing InputType.Joystick and in order from player1 - 8 set their Controller numbers.
+        //Set the numbers regardless of if there are any joysticks connected.
+        //If there are no Joysticks connected another function will handle setting all players not set to keyboard to AI
+    }
+
 
     private void InitializePlayerNumbers()
     {
@@ -465,42 +451,43 @@ public class InputManager : Observer
 
     public void ReInitializeInputStrings(ref InputStrings aInputStrings)
     {
-        if (aInputStrings.InputType == InputType.Joystick)
+        if (aInputStrings.InputType == InputPeripheral.Joystick)
         {
-            aInputStrings.MoveXInput = InputXBOXControlsArray[(int)InputXBOXControls.LeftStickX];
-            aInputStrings.MoveYInput = InputXBOXControlsArray[(int)InputXBOXControls.LeftStickY];
-            aInputStrings.CameraXInput = InputXBOXControlsArray[(int)InputXBOXControls.RightStickX];
-            aInputStrings.CameraYInput = InputXBOXControlsArray[(int)InputXBOXControls.RightStickY];
+            aInputStrings.MoveXInput = InputXBOXControls.LeftStickX.ToString();
+            aInputStrings.MoveYInput = InputXBOXControls.LeftStickY.ToString();
+            aInputStrings.CameraXInput = InputXBOXControls.RightStickX.ToString();
+            aInputStrings.CameraYInput = InputXBOXControls.RightStickY.ToString();
 
-            aInputStrings.InteractInput = InputXBOXControlsArray[(int)InputXBOXControls.X];
-            aInputStrings.JumpInput = InputXBOXControlsArray[(int)InputXBOXControls.A];
-            aInputStrings.SprintInput = InputXBOXControlsArray[(int)InputXBOXControls.Y];
-            aInputStrings.AttackInput = InputXBOXControlsArray[(int)InputXBOXControls.RightTrigger];
-            aInputStrings.MagicInput = InputXBOXControlsArray[(int)InputXBOXControls.LeftTrigger];
+            aInputStrings.InteractInput = InputXBOXControls.X.ToString();
+            aInputStrings.JumpInput = InputXBOXControls.A.ToString();
+            aInputStrings.SprintInput = InputXBOXControls.Y.ToString();
+            aInputStrings.AttackInput = InputXBOXControls.RightTrigger.ToString();
+            aInputStrings.MagicInput = InputXBOXControls.LeftTrigger.ToString();
 
-            aInputStrings.PauseInput = InputXBOXControlsArray[(int)InputXBOXControls.Start];
-            aInputStrings.HelpInput = InputXBOXControlsArray[(int)InputXBOXControls.Back];
+            aInputStrings.PauseInput = InputXBOXControls.Start.ToString();
+            aInputStrings.HelpInput = InputXBOXControls.Back.ToString();
         }
-        else if (aInputStrings.InputType == InputType.Keyboard)
+        else if (aInputStrings.InputType == InputPeripheral.Keyboard)
         {
-            aInputStrings.MoveXInput = InputPCControlsArray[(int)InputPCControls.MoveX];
-            aInputStrings.MoveYInput = InputPCControlsArray[(int)InputPCControls.MoveY];
-            aInputStrings.CameraXInput = InputPCControlsArray[(int)InputPCControls.MouseX];
-            aInputStrings.CameraYInput = InputPCControlsArray[(int)InputPCControls.MouseY];
+            aInputStrings.MoveXInput = InputPCControls.MoveX.ToString();
+            aInputStrings.MoveYInput = InputPCControls.MoveY.ToString();
+            aInputStrings.CameraXInput = InputPCControls.MouseX.ToString();
+            aInputStrings.CameraYInput = InputPCControls.MouseY.ToString();
 
-            aInputStrings.InteractInput = InputPCControlsArray[(int)InputPCControls.E];
-            aInputStrings.JumpInput = InputPCControlsArray[(int)InputPCControls.Space];
-            aInputStrings.SprintInput = InputPCControlsArray[(int)InputPCControls.C];
-            aInputStrings.AttackInput = InputPCControlsArray[(int)InputPCControls.MouseRightClick];
-            aInputStrings.MagicInput = InputPCControlsArray[(int)InputPCControls.MouseLeftClick];
+            aInputStrings.InteractInput = InputPCControls.E.ToString();
+            aInputStrings.JumpInput = InputPCControls.Space.ToString();
+            aInputStrings.SprintInput = InputPCControls.C.ToString();
+            aInputStrings.AttackInput = InputPCControls.MouseRightClick.ToString();
+            aInputStrings.MagicInput = InputPCControls.MouseLeftClick.ToString();
 
-            aInputStrings.PauseInput = InputPCControlsArray[(int)InputPCControls.Escape];
-            aInputStrings.HelpInput = InputPCControlsArray[(int)InputPCControls.Tab];
+            aInputStrings.PauseInput = InputPCControls.Escape.ToString();
+            aInputStrings.HelpInput = InputPCControls.Tab.ToString();
         }
     }
 
-    public void SetInputType(ref InputStrings aInputStrings, InputType aInputType) // InputManager.Instance.m_InputStrings[PlayerNumber.One], InputType.XBOX;
+    public void SetInputType(ref InputStrings aInputStrings, InputPeripheral aInputType) // InputManager.Instance.m_InputStrings[PlayerNumber.One], InputType.XBOX;
     {
+        //Only used in the input menus, input menu needs to call this once on apply changes... Should be a larger function which considers more...
         aInputStrings.InputType = aInputType;
     }
 
@@ -542,80 +529,79 @@ public class InputManager : Observer
 
     public override void OnNotify(ref GameObject aEntity, GameEvent aEvent)
     {
-        TransitionStates(ref aEntity, aEvent);
+
     }
+}
 
-    private void TransitionStates(ref GameObject aEntity, GameEvent aEvent)
+[Serializable]
+public class InputObj
+{
+    public InputType Type;
+    public Enum InputElement;
+    public static float ValueLastFrame;
+
+    public void SetInputEnum(InputPeripheral aPeripheral)
     {
-        switch (aEvent)
+        switch (aPeripheral)
         {
-            case GameEvent.Menu:
-                {
-                    //Set appropriate menu controls
-                    m_State = InputState.Menu;
-                }
+            case InputPeripheral.Joystick:
+                InputElement = new InputXBOXControls();
                 break;
-            case GameEvent.CharacterSelecting:
-                {
-                    //Set controls so multiple players can select their own characters
-                    m_State = InputState.CharacterSelect;
-                }
+            case InputPeripheral.Keyboard:
+                InputElement = new InputPCControls();
                 break;
-            case GameEvent.Gameplay:
-                {
-                    //Set controls to each of the players
-                    m_State = InputState.Gameplay;
-                }
-                break;
-            #region // Pointless events
-
-            case GameEvent.Pausing:
-                {
-                    //Do nothing
-                }
-                break;
-            case GameEvent.GameOver:
-                {
-                    //Do nothing
-                }
-                break;
-            case GameEvent.Victory:
-                {
-                    //Do nothing
-                }
-                break;
-            case GameEvent.Saving:
-                {
-                    //Do nothing
-                }
-                break;
-            case GameEvent.Loaded:
-                {
-                    //Do nothing
-                }
-                break;
-            case GameEvent.EndingScene:
-                {
-                    //Do nothing
-                }
-                break;
-            case GameEvent.ReloadingScene:
-                {
-                    //Do nothing
-                }
-                break;
-            case GameEvent.LoadingScene:
-                {
-                    //Do nothing
-                }
+            case InputPeripheral.AI:
+                Debug.Log("Peripheral set to AI");
                 break;
             default:
+                Debug.Log("Unhandled Peripheral");
+                break;
+        }
+    }
+}
+
+public class InputConfig
+{
+    public InputPeripheral Peripheral;
+    public PlayerNumber Number;
+    public int JoystickNumber;
+    public Dictionary<string, InputObj> InputObjects;
+
+    public void AddInputElement(string aInputName, InputObj aInputObj)
+    {
+        //Add an element to the Dictionary based on the input_database
+        aInputObj.SetInputEnum(Peripheral);
+        InputObjects.Add(aInputName, aInputObj);
+    }
+
+    public bool HandleInput(InputObj aInputObject)
+    {
+        switch (aInputObject.Type)
+        {
+            case InputType.Tap:
+                if (Input.GetAxis(Peripheral.ToString() + Number.ToString() + aInputObject.InputElement.ToString()) > 0)
                 {
-                    Debug.Log(aEntity + "Unhandled GameEvent");
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
                 break;
-            #endregion //
+            case InputType.DoubleTap:
+                return true;
+                break;
+            case InputType.Hold:
+                return true;
+                break;
+            case InputType.Toggle:
+                return true;
+                break;
+            default:
+                Debug.Log("Unhandled Input Type " + aInputObject);
+                return false;
+                break;
         }
-        //m_CurrentState = m_State;
     }
+
 }

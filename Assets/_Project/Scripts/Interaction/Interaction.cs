@@ -10,7 +10,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Interaction : MonoBehaviour
+public class Interaction : MonoBehaviourSubject
 {
     public IInteractable current { get; private set; }
     public float InteractionRadius;

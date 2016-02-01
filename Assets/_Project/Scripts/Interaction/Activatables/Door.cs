@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Door : MonoBehaviour, IActivatable, IInteractable
+public class Door : MonoBehaviourSubject, IActivatable, IInteractable
 {
     private Vector3 m_OpenPos;
     private Vector3 m_ClosedPos;

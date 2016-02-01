@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class DontDestroyOnLoad : MonoBehaviour
+public class DontDestroyOnLoad : MonoBehaviourSubject
 {
     private string m_LastLevelLoaded;
 

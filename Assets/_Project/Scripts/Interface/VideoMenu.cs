@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class VideoMenu : MonoBehaviour
+public class VideoMenu : MonoBehaviourSubject
 {
     private GameObject m_OptionsMenuCanvas;
     private UnityEngine.EventSystems.EventSystem m_EventSystem;

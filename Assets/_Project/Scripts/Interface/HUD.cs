@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class HUD : MonoBehaviour
+public class HUD : MonoBehaviourSubject
 {
 	// private Member Variables
 	private GameObject HealthBar;

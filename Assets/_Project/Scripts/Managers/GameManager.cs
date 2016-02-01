@@ -12,7 +12,7 @@ using UnityEngine;
 using System.Collections;
 //using UnityEngine.SceneManagement;
 
-public enum GameEvent
+public enum GameEvent // use object instead...
 {
     Menu,
     CharacterSelecting,
@@ -135,21 +135,18 @@ public class GameManager : Observer
         {
             case GameEvent.Menu:
                 {
-                    InputManager.Instance.m_State = InputState.Menu;
                     m_State = GameState.Menu;
                     Debug.Log("StateChangedTo: MainMenu");
                 }
                 break;
             case GameEvent.CharacterSelecting:
                 {
-                    InputManager.Instance.m_State = InputState.CharacterSelect;
                     m_State = GameState.CharacterSelect;
                     Debug.Log("StateChangedTo: CharacterSelect");
                 }
                 break;
             case GameEvent.Pausing:
                 {
-                    InputManager.Instance.m_State = InputState.Menu;
                     //PauseGame();
                     m_State = GameState.Paused;
                     Debug.Log("StateChangedTo: Paused");
@@ -157,7 +154,6 @@ public class GameManager : Observer
                 break;
             case GameEvent.Gameplay:
                 {
-                    InputManager.Instance.m_State = InputState.Gameplay;
                     m_State = GameState.Gameplay;
                     Debug.Log("StateChangedTo: Gameplay");
                 }

@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class KinematicRotate : MonoBehaviour
+public class KinematicRotate : MonoBehaviourSubject
 {
     public Vector3 RotationValuePerSecond = new Vector3();
     IEnumerator coroutine;

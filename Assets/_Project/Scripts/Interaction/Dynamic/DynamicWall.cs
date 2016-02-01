@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DynamicWall : MonoBehaviour, IDynamic
+public class DynamicWall : MonoBehaviourSubject, IDynamic
 {
     public float m_Health = 1;
 

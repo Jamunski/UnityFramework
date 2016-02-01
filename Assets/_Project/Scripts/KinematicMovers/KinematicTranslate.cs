@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class KinematicTranslate : MonoBehaviour
+public class KinematicTranslate : MonoBehaviourSubject
 {
     public float m_CycleSpeed;
     private Vector3 m_TranslateStart;

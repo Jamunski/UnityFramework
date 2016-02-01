@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class ActorMovement : MonoBehaviour
+public class ActorMovement : MonoBehaviourSubject
 {
 	//private Member variables
 	private Actor m_Player = null;

@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class OptionsMenu : MonoBehaviour
+public class OptionsMenu : MonoBehaviourSubject
 {
     private GameObject m_MainMenuCanvas;
     private GameObject m_InputMenuCanvas;

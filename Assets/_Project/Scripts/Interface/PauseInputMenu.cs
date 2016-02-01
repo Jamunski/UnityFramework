@@ -10,7 +10,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
-public class PauseInputMenu : MonoBehaviour
+public class PauseInputMenu : MonoBehaviourSubject
 {
     private GameObject m_OptionsMenuCanvas;
     private UnityEngine.EventSystems.EventSystem m_EventSystem;
@@ -67,14 +67,14 @@ public class PauseInputMenu : MonoBehaviour
         {
             switch (m_Player.InputType)
             {
-                case InputType.Joystick:
+                case InputPeripheral.Joystick:
                     {
-                        InputManager.Instance.SetInputType(ref m_Player, InputType.Keyboard);
+                        InputManager.Instance.SetInputType(ref m_Player, InputPeripheral.Keyboard);
                     }
                     break;
-                case InputType.Keyboard:
+                case InputPeripheral.Keyboard:
                     {
-                        InputManager.Instance.SetInputType(ref m_Player, InputType.Joystick);
+                        InputManager.Instance.SetInputType(ref m_Player, InputPeripheral.Joystick);
                     }
                     break;
             }

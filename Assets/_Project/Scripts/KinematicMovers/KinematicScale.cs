@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class KinematicScale : MonoBehaviour {
+public class KinematicScale : MonoBehaviourSubject
+{
 
 	// Use this for initialization
 	void Start () {

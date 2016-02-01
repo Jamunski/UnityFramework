@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Switch : MonoBehaviour, IInteractable
+public class Switch : MonoBehaviourSubject, IInteractable
 {
     public GameObject[] target;
     public Sprite icon;

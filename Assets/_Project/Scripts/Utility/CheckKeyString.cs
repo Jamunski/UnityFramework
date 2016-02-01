@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class CheckKeyString : MonoBehaviour
+public class CheckKeyString : MonoBehaviourSubject
 {
     void Update()
     {

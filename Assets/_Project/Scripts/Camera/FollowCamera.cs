@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class FollowCamera : MonoBehaviour, ICamera
+public class FollowCamera : MonoBehaviourSubject, ICamera
 {
 	public GameObject m_Target;
 	public Vector3 m_CameraOffset = new Vector3(0,2,-4);

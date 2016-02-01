@@ -15,8 +15,8 @@ public class MonoBehaviourSubject : MonoBehaviour
 {
     public string m_ParentName;
 
-    List<Observer> m_ObserverList;
-    int m_NumObservers;
+    private List<Observer> m_ObserverList;
+    private int m_NumObservers;
 
     private void InitializeList()
     {

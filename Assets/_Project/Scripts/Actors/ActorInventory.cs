@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class ActorInventory : MonoBehaviour
+public class ActorInventory : MonoBehaviourSubject
 {
 
 }

@@ -11,7 +11,7 @@ using System.Collections;
 //using System.Collections.Generic;
 using UnityEngine.UI;
 
-public class InputMenu : MonoBehaviour
+public class InputMenu : MonoBehaviourSubject
 {
     private GameObject m_OptionsMenuCanvas;
     private UnityEngine.EventSystems.EventSystem m_EventSystem;
@@ -97,14 +97,14 @@ public class InputMenu : MonoBehaviour
         {
             switch (m_Player1.InputType)
             {
-                case InputType.Joystick:
+                case InputPeripheral.Joystick:
                     {
-                        InputManager.Instance.SetInputType(ref m_Player1, InputType.Keyboard);
+                        InputManager.Instance.SetInputType(ref m_Player1, InputPeripheral.Keyboard);
                     }
                     break;
-                case InputType.Keyboard:
+                case InputPeripheral.Keyboard:
                     {
-                        InputManager.Instance.SetInputType(ref m_Player1, InputType.Joystick);
+                        InputManager.Instance.SetInputType(ref m_Player1, InputPeripheral.Joystick);
                     }
                     break;
             }
@@ -118,14 +118,14 @@ public class InputMenu : MonoBehaviour
         {
             switch (m_Player2.InputType)
             {
-                case InputType.Joystick:
+                case InputPeripheral.Joystick:
                     {
-                        InputManager.Instance.SetInputType(ref m_Player2, InputType.Keyboard);
+                        InputManager.Instance.SetInputType(ref m_Player2, InputPeripheral.Keyboard);
                     }
                     break;
-                case InputType.Keyboard:
+                case InputPeripheral.Keyboard:
                     {
-                        InputManager.Instance.SetInputType(ref m_Player2, InputType.Joystick);
+                        InputManager.Instance.SetInputType(ref m_Player2, InputPeripheral.Joystick);
                     }
                     break;
             }

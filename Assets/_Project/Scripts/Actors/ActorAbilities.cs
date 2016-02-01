@@ -10,7 +10,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class ActorAbilities : MonoBehaviour
+public class ActorAbilities : MonoBehaviourSubject
 {
     private ActorStatistics m_Stats;
 
