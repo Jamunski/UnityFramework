@@ -18,9 +18,9 @@ public class DatabasesWindow : EditorWindow
 		{
 			ScriptableObjectUtility.CreateAsset<AchievementDatabase>();
 		}
-        if (GUILayout.Button("Create InputObject Database"))
+        if (GUILayout.Button("Create InputActions Database"))
         {
-            ScriptableObjectUtility.CreateAsset<InputObjectDatabase>();
+			ScriptableObjectUtility.CreateAsset<InputActionsDatabase>();
         }
     }
 }

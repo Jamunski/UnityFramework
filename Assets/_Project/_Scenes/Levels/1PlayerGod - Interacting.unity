@@ -238,6 +238,10 @@ Prefab:
       propertyPath: m_HUD
       value: 
       objectReference: {fileID: 2067679147}
+    - target: {fileID: 11417538, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}
+      propertyPath: PlayerNumber
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 43b380c2ea806de4da706d2b9d2228e1, type: 2}

@@ -19,8 +19,6 @@ public class Actor : MonoBehaviourSubject
 	[HideInInspector]
 	public ActorMovement m_Movement = null;
 	[HideInInspector]
-	public PlayerInput m_Input = null;
-	[HideInInspector]
 	public ActorInventory m_Inventory = null;
 	[HideInInspector]
 	public Interaction m_Interaction = null;
@@ -34,7 +32,7 @@ public class Actor : MonoBehaviourSubject
 	//Unity Callbacks
 	void Start()
 	{
-        Debug.Log(InputXBOXControls.RightStickY.ToString());
+        Debug.Log(InputXBOX.RightStickY.ToString());
 		AddObserver(GameManager.Instance);
 		m_Statistics = new ActorStatistics(gameObject.GetComponent<Actor>());
 		if (m_HUD != null)
@@ -47,7 +45,6 @@ public class Actor : MonoBehaviourSubject
 	void OnEnable()
 	{
 		AddActorComponents();
-		AddInputScript();
 	}
 
 	void Update()
@@ -65,33 +62,38 @@ public class Actor : MonoBehaviourSubject
 	{
 		if (m_Statistics.m_Pools.Health > 0) //Probable temp???
 		{
-			// Button Input
-			if (m_Input.Interact() != 0) { Interact(); }
+			if (InputManager.Instance.m_InputConfigs[(int)PlayerNumber].CheckInput(InputManager.Instance.m_InputConfigs[(int)PlayerNumber].InputObjects["Jump"]))
+			{
+				m_Abilities.Jump();
+			}
 
-			if (m_Input.Sprint() != 0) { Sprint(); }
-			else { m_Statistics.m_IsSprinting = false; m_Statistics.CalculateSpeed(); }
+			if (InputManager.Instance.m_InputConfigs[(int)PlayerNumber].CheckInput(InputManager.Instance.m_InputConfigs[(int)PlayerNumber].InputObjects["Pause"]))
+			{
+				Pause();
+			}
 
-			if (m_Input.Attack() != 0) { Attack(); }
-
-			if (m_Input.Magic() != 0) { Magic(); }
+			if (InputManager.Instance.m_InputConfigs[(int)PlayerNumber].CheckInput(InputManager.Instance.m_InputConfigs[(int)PlayerNumber].InputObjects["Interact"]))
+			{
+				m_Interaction.Interact();
+			}
 		}
-
-		if (m_Input.Pause() != 0) { Pause(); }
-
-		if (m_Input.Help() != 0) { Help(); }
 	}
 
 	private void UpdateMovementInput()
 	{
 		if (m_Statistics.m_Pools.Health > 0) //Probable temp???
 		{
+			if (InputManager.Instance.m_InputConfigs[(int)PlayerNumber].CheckInput(InputManager.Instance.m_InputConfigs[(int)PlayerNumber].InputObjects["Interact"]))
+			{
+
+			}
 			// Movement
-			if (m_Input.Movement().magnitude != 0) { Movement(new Vector3(m_Input.Movement().x, m_Input.Movement().y, 0.0f)); }
+			//if (m_Input.Movement().magnitude != 0) { Movement(new Vector3(m_Input.Movement().x, m_Input.Movement().y, 0.0f)); }
 
-			// Camera
-			if (m_Input.Camera().magnitude != 0) { Camera(new Vector3(m_Input.Camera().x, m_Input.Camera().y, 0.0f)); }
+			//// Camera
+			//if (m_Input.Camera().magnitude != 0) { Camera(new Vector3(m_Input.Camera().x, m_Input.Camera().y, 0.0f)); }
 
-            if (m_Input.Jump() != 0) { Jump(); }
+			//if (m_Input.Jump() != 0) { Jump(); }
         }
 	}
 
@@ -105,10 +107,6 @@ public class Actor : MonoBehaviourSubject
 
 	//public Methods
 	#region // Input
-	public void AddInputScript()
-	{
-		m_Input = gameObject.AddComponent<PlayerInput>();
-	}
 
 	public void Movement(Vector3 aInput)
 	{
