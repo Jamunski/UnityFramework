@@ -26,13 +26,14 @@ public class FollowCamera : MonoBehaviourSubject, ICamera
 
 	void Update()
 	{
+		Vector3 Offset = transform.position - m_Target.transform.position;
+		transform.position = m_Target.transform.position + Offset.normalized * m_DistanceFromCamera;
+
 		transform.RotateAround(m_Target.transform.position, Vector3.up, m_CameraRotationY);
 		transform.RotateAround(m_Target.transform.position, transform.right, m_CameraRotationX);
 		transform.LookAt(m_Target.transform.position);
 
 
-		Vector3 thing = transform.position - m_Target.transform.position;
-		transform.position = m_Target.transform.position + thing.normalized * m_DistanceFromCamera;
 		m_CameraRotationY = 0;
 		m_CameraRotationX = 0;
 	}

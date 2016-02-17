@@ -31,17 +31,24 @@ public class ActorMovement : MonoBehaviourSubject
 	{
 		try
 		{
+			Vector3 cameraVector = new Vector3(m_Camera.transform.forward.x, 0, m_Camera.transform.forward.z);
+			transform.rotation = Quaternion.LookRotation(cameraVector);
+
+			Vector3 velocityY = Vector3.zero;
+			Vector3 velocityX = Vector3.zero;
 			Vector3 velocity = Vector3.zero;
 
-			velocity = (m_Camera.transform.forward * -aInput.y * m_Player.m_Statistics.m_FinalSpeed);
+
+			velocityY = (m_Camera.transform.forward * aInput.y * m_Player.m_Statistics.m_FinalSpeed);
+			velocityX = (transform.right * aInput.x * m_Player.m_Statistics.m_FinalSpeed);
+			velocity = velocityY + velocityX;
 			velocity.y = 0;
 
 			Vector3.Normalize(velocity);
 
-			Vector3 cameraVector = new Vector3(m_Camera.transform.forward.x, 0, m_Camera.transform.forward.z);
-			transform.rotation = Quaternion.LookRotation(cameraVector);
+			Debug.Log(m_Player.m_Statistics.m_FinalSpeed);
 
-			transform.position += velocity * Time.deltaTime;
+			m_PlayerRigidBody.MovePosition(transform.position + velocity * Time.fixedDeltaTime);
 		}
 		catch
 		{

@@ -29,11 +29,13 @@ public class Actor : MonoBehaviourSubject
 
 	public HUD m_HUD;
 
+	private InputConfig m_PlayerInputConfig;
+
 	//Unity Callbacks
 	void Start()
 	{
-        Debug.Log(InputXBOX.RightStickY.ToString());
 		AddObserver(GameManager.Instance);
+		m_PlayerInputConfig = InputManager.Instance.m_InputConfigs[(int)PlayerNumber];
 		m_Statistics = new ActorStatistics(gameObject.GetComponent<Actor>());
 		if (m_HUD != null)
 		{
@@ -60,41 +62,38 @@ public class Actor : MonoBehaviourSubject
 	// private Methods
 	private void UpdateButtonInput()
 	{
-		if (m_Statistics.m_Pools.Health > 0) //Probable temp???
+		if(m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["Interact"], this) > 0.01f)
 		{
-			if (InputManager.Instance.m_InputConfigs[(int)PlayerNumber].CheckInput(InputManager.Instance.m_InputConfigs[(int)PlayerNumber].InputObjects["Jump"]))
-			{
-				m_Abilities.Jump();
-			}
+			m_Interaction.Interact();
+		}
 
-			if (InputManager.Instance.m_InputConfigs[(int)PlayerNumber].CheckInput(InputManager.Instance.m_InputConfigs[(int)PlayerNumber].InputObjects["Pause"]))
-			{
-				Pause();
-			}
-
-			if (InputManager.Instance.m_InputConfigs[(int)PlayerNumber].CheckInput(InputManager.Instance.m_InputConfigs[(int)PlayerNumber].InputObjects["Interact"]))
-			{
-				m_Interaction.Interact();
-			}
+		if( m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["Pause"], this) > 0.01f)
+		{
+			Pause();
 		}
 	}
 
 	private void UpdateMovementInput()
 	{
-		if (m_Statistics.m_Pools.Health > 0) //Probable temp???
+		//Call Movement Here: Take all the movement inputs and populate a vector2 with their values.
+
+		if(MovementInput().magnitude > 0.01f)
 		{
-			if (InputManager.Instance.m_InputConfigs[(int)PlayerNumber].CheckInput(InputManager.Instance.m_InputConfigs[(int)PlayerNumber].InputObjects["Interact"]))
-			{
+			m_Movement.Movement(new Vector3(MovementInput().x, MovementInput().y, 0));
+		}
 
-			}
-			// Movement
-			//if (m_Input.Movement().magnitude != 0) { Movement(new Vector3(m_Input.Movement().x, m_Input.Movement().y, 0.0f)); }
+		if(m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["Jump"], this) > 0.01f)
+		{
 
-			//// Camera
-			//if (m_Input.Camera().magnitude != 0) { Camera(new Vector3(m_Input.Camera().x, m_Input.Camera().y, 0.0f)); }
+		}
 
-			//if (m_Input.Jump() != 0) { Jump(); }
-        }
+		// Movement
+		//if (m_Input.Movement().magnitude != 0) { Movement(new Vector3(m_Input.Movement().x, m_Input.Movement().y, 0.0f)); }
+
+		//// Camera
+		//if (m_Input.Camera().magnitude != 0) { Camera(new Vector3(m_Input.Camera().x, m_Input.Camera().y, 0.0f)); }
+
+		//if (m_Input.Jump() != 0) { Jump(); }
 	}
 
 	//private Methods
@@ -106,59 +105,31 @@ public class Actor : MonoBehaviourSubject
 	}
 
 	//public Methods
-	#region // Input
-
-	public void Movement(Vector3 aInput)
+	public Vector2 MovementInput()
 	{
-		m_Movement.Movement(aInput);
+		Vector2 movementVector = new Vector2();
+
+		movementVector.y += m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["MoveForward"], this);
+
+		movementVector.y -= m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["MoveBackward"], this);
+
+		movementVector.x -= m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["MoveLeft"], this);
+
+		movementVector.x += m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["MoveRight"], this);
+
+		return movementVector;
 	}
 
-	public void Camera(Vector3 aInput)
-	{
-		m_Movement.Camera(aInput);
-	}
-
-	public void Interact()
-	{
-		m_Interaction.Interact();
-	}
-
-	public void Jump()
-	{
-		m_Abilities.Jump();
-	}
-
-	public void Sprint()
-	{
-		m_Abilities.Sprint();
-	}
-
-	public void Attack()
-	{
-		m_Abilities.Attack();
-	}
-
-	public void Magic()
-	{
-		m_Abilities.Magic();
-	}
-
-	public void Pause()
+	public void Pause() // Probably should be handled in the game manager...
 	{
 		Debug.Log("PauseButtonHit");
-		if (GameObject.FindObjectOfType<PauseGame>())
+		try
 		{
 			GameObject.FindObjectOfType<PauseGame>().Pause(gameObject);
 		}
-		else
+		catch
 		{
 			Debug.Log("PauseFailed, no PauseGame object in the scene");
 		}
 	}
-
-	public void Help()
-	{
-		Debug.Log("HelpButtonHit");
-	}
-	#endregion
 }

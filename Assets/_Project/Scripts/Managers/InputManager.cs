@@ -12,11 +12,42 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public enum InputPeripheral
+public abstract class InputPeripheral
 {
-	NA = -1, //No Peripheral, useful for AI
-	Joystick = 0,
-	Keyboard
+	public string PeripheralString;
+
+	public abstract void SetPeripheralString(PlayerNumber aPlayerNumber);
+}
+
+public class PeripheralNA : InputPeripheral
+{
+	public override void SetPeripheralString(PlayerNumber aPlayerNumber)
+	{
+		PeripheralString = "NA";
+	}
+}
+
+public class PeripheralPC : InputPeripheral
+{
+	public override void SetPeripheralString(PlayerNumber aPlayerNumber)
+	{
+		PeripheralString = "Keyboard";
+	}
+}
+
+public class PeripheralXBOX : InputPeripheral
+{
+	public override void SetPeripheralString(PlayerNumber aPlayerNumber)
+	{
+		if (aPlayerNumber != PlayerNumber.God)
+		{
+			PeripheralString = "Joystick" + aPlayerNumber.ToString();
+		}
+		else
+		{
+			PeripheralString = "Joystick";
+		}
+	}
 }
 
 public enum InputType
@@ -101,86 +132,100 @@ public class InputManager
 		InitializeActionInputs();
 	}
 
-	public void SetActionInput(InputConfig aInputConfig, string aAction, InputPC aInput, InputType aInputType = InputType.Tap)
-	{
-		aInputConfig.SetInputElement(aInputConfig.InputObjects[aAction], aInput, aInputType);
-	}
-
-	public void SetActionInput(InputConfig aInputConfig, string aAction, InputXBOX aInput, InputType aInputType = InputType.Tap)
-	{
-		aInputConfig.SetInputElement(aInputConfig.InputObjects[aAction], aInput, aInputType);
-	}
-
 	private void InitializeInputConfigs()
 	{
-		m_InputConfigs[0] = new InputConfig(InputPeripheral.Keyboard);
+		m_InputConfigs = new InputConfig[9];
+
+		m_InputConfigs[0] = new InputConfig(new PeripheralPC());
 		for (int i = 0; i < m_ControllersConnected; i++)
 		{
-			m_InputConfigs[i + 1] = new InputConfig(InputPeripheral.Joystick);
+			m_InputConfigs[i + 1] = new InputConfig(new PeripheralXBOX());
 		}
 		//if controllers connected == 3, set the fourth player to Keyboard
-		if (m_ControllersConnected != 0 || m_ControllersConnected != 8)
+		if (m_ControllersConnected != 8)
 		{
-			m_InputConfigs[m_ControllersConnected + 1] = new InputConfig(InputPeripheral.Keyboard);
 			// Every other controller should have peripheral NA after this...
 			for (int i = 0; i < (m_InputConfigs.Length - 1) - m_ControllersConnected; i++)
 			{
-				m_InputConfigs[i + m_ControllersConnected + 1] = new InputConfig(InputPeripheral.NA);
+				m_InputConfigs[i + m_ControllersConnected + 1] = new InputConfig(new PeripheralNA()); // NULL INPUT PERIPHERAL
 			}
+			m_InputConfigs[m_ControllersConnected + 1] = new InputConfig(new PeripheralPC());
 		}
 	}
 
+	//PLEASE CHANGE ME!!! if there are 100 peripheral types then you will need to overload 100 times...
+	public void CreateActionInput(InputConfig aInputConfig, string aAction, InputPC aInput, InputType aInputType = InputType.Tap)
+	{
+		aInputConfig.InputObjects.Add(aAction, new InputObj());
+		aInputConfig.InputObjects[aAction].InputElement = aInput;
+		aInputConfig.InputObjects[aAction].Type = aInputType;
+	}
+
+	public void CreateActionInput(InputConfig aInputConfig, string aAction, InputXBOX aInput, InputType aInputType = InputType.Tap)
+	{
+		aInputConfig.InputObjects.Add(aAction, new InputObj());
+		aInputConfig.InputObjects[aAction].InputElement = aInput;
+		aInputConfig.InputObjects[aAction].Type = aInputType;
+	}
+
+	//PLEASE CHANGE ME!!!
 	private void InitializeActionInputs()
 	{
-		SetActionInput(m_InputConfigs[0], "MoveX", InputPC.MoveX, InputType.Hold);
-		SetActionInput(m_InputConfigs[0], "MoveY", InputPC.MoveY, InputType.Hold);
-		SetActionInput(m_InputConfigs[0], "CameraX", InputPC.MouseX, InputType.Hold);
-		SetActionInput(m_InputConfigs[0], "CameraY", InputPC.MouseY, InputType.Hold);
+		Debug.Log(m_InputConfigs[1].Peripheral.ToString());
+		CreateActionInput(m_InputConfigs[1], "MoveForward", InputPC.W, InputType.Hold);
+		CreateActionInput(m_InputConfigs[1], "MoveBackward", InputPC.S, InputType.Hold);
+		CreateActionInput(m_InputConfigs[1], "MoveLeft", InputPC.A, InputType.Hold);
+		CreateActionInput(m_InputConfigs[1], "MoveRight", InputPC.D, InputType.Hold);
+		// CheckAxisInput(InputObj aNegativeAction, Inputobj aPositiveAction)
+		// Create an axis input using both existing actions...
+		// This is useful for the situation with movement and stuff, players will still be able to remap the individual InputObj
+		// because the axis action will refer to those objects...
 
-		SetActionInput(m_InputConfigs[0], "CenterCamera", InputPC.C, InputType.Tap);
+		CreateActionInput(m_InputConfigs[1], "CameraX", InputPC.MouseX, InputType.Hold);
+		CreateActionInput(m_InputConfigs[1], "CameraY", InputPC.MouseY, InputType.Hold);
+		CreateActionInput(m_InputConfigs[1], "CameraX", InputPC.MouseX, InputType.Hold);
+		CreateActionInput(m_InputConfigs[1], "CameraY", InputPC.MouseY, InputType.Hold);
 
-		SetActionInput(m_InputConfigs[0], "Jump", InputPC.V, InputType.Hold);
-		SetActionInput(m_InputConfigs[0], "Sprint", InputPC.LeftShift, InputType.Hold);
-		SetActionInput(m_InputConfigs[0], "Dodge", InputPC.Space, InputType.Tap);
+		CreateActionInput(m_InputConfigs[1], "CenterCamera", InputPC.C, InputType.Tap);
 
-		SetActionInput(m_InputConfigs[0], "UseItem", InputPC.F, InputType.Tap);
-		SetActionInput(m_InputConfigs[0], "Interact", InputPC.E, InputType.Tap);
+		CreateActionInput(m_InputConfigs[1], "Jump", InputPC.V, InputType.Tap);
+		CreateActionInput(m_InputConfigs[1], "Sprint", InputPC.LeftShift, InputType.Hold);
+		CreateActionInput(m_InputConfigs[1], "Dodge", InputPC.Space, InputType.Tap);
 
-		SetActionInput(m_InputConfigs[0], "LeftAction1", InputPC.MouseLeftClick, InputType.Tap);
-		SetActionInput(m_InputConfigs[0], "LeftAction2", InputPC.MouseLeftClick, InputType.DoubleTap);
-		SetActionInput(m_InputConfigs[0], "RightAction1", InputPC.MouseRightClick, InputType.Tap);
-		SetActionInput(m_InputConfigs[0], "RightAction2", InputPC.MouseRightClick, InputType.DoubleTap);
+		CreateActionInput(m_InputConfigs[1], "UseItem", InputPC.F, InputType.Tap);
+		CreateActionInput(m_InputConfigs[1], "Interact", InputPC.E, InputType.Tap);
 
+		CreateActionInput(m_InputConfigs[1], "LeftAction1", InputPC.MouseLeftClick, InputType.Tap);
+		CreateActionInput(m_InputConfigs[1], "LeftAction2", InputPC.MouseLeftClick, InputType.DoubleTap);
+		CreateActionInput(m_InputConfigs[1], "RightAction1", InputPC.MouseRightClick, InputType.Tap);
+		CreateActionInput(m_InputConfigs[1], "RightAction2", InputPC.MouseRightClick, InputType.DoubleTap);
 
+		CreateActionInput(m_InputConfigs[1], "Pause", InputPC.Escape, InputType.Tap);
+		CreateActionInput(m_InputConfigs[1], "Help", InputPC.Tab, InputType.Tap);
 
-		SetActionInput(m_InputConfigs[1], "MoveX", InputXBOX.LeftStickX, InputType.Hold);
-		SetActionInput(m_InputConfigs[1], "MoveY", InputXBOX.LeftStickY, InputType.Hold);
-		SetActionInput(m_InputConfigs[1], "CameraX", InputXBOX.RightStickX, InputType.Hold);
-		SetActionInput(m_InputConfigs[1], "CameraY", InputXBOX.RightStickY, InputType.Hold);
+		//CreateActionInput(m_InputConfigs[2], "MoveX", InputXBOX.LeftStickX, InputType.Hold);
+		//CreateActionInput(m_InputConfigs[2], "MoveY", InputXBOX.LeftStickY, InputType.Hold);
+		//CreateActionInput(m_InputConfigs[2], "CameraX", InputXBOX.RightStickX, InputType.Hold);
+		//CreateActionInput(m_InputConfigs[2], "CameraY", InputXBOX.RightStickY, InputType.Hold);
 
-		SetActionInput(m_InputConfigs[1], "CenterCamera", InputXBOX.RightStickClick, InputType.Tap);
+		//CreateActionInput(m_InputConfigs[2], "CenterCamera", InputXBOX.RightStickClick, InputType.Tap);
 
-		SetActionInput(m_InputConfigs[1], "Jump", InputXBOX.Y, InputType.Hold);
-		SetActionInput(m_InputConfigs[1], "Sprint", InputXBOX.LeftStickClick, InputType.Hold);
-		SetActionInput(m_InputConfigs[1], "Dodge", InputXBOX.B, InputType.Tap);
+		//CreateActionInput(m_InputConfigs[2], "Jump", InputXBOX.Y, InputType.Hold);
+		//CreateActionInput(m_InputConfigs[2], "Sprint", InputXBOX.LeftStickClick, InputType.Hold);
+		//CreateActionInput(m_InputConfigs[2], "Dodge", InputXBOX.B, InputType.Tap);
 
-		SetActionInput(m_InputConfigs[1], "UseItem", InputXBOX.X, InputType.Tap);
-		SetActionInput(m_InputConfigs[1], "Interact", InputXBOX.A, InputType.Tap);
+		//CreateActionInput(m_InputConfigs[2], "UseItem", InputXBOX.X, InputType.Tap);
+		//CreateActionInput(m_InputConfigs[2], "Interact", InputXBOX.A, InputType.Tap);
 
-		SetActionInput(m_InputConfigs[1], "LeftAction1", InputXBOX.LeftBumper, InputType.Tap);
-		SetActionInput(m_InputConfigs[1], "LeftAction2", InputXBOX.LeftTrigger, InputType.Tap);
-		SetActionInput(m_InputConfigs[1], "RightAction1", InputXBOX.RightBumper, InputType.Tap);
-		SetActionInput(m_InputConfigs[1], "RightAction2", InputXBOX.RightTrigger, InputType.Tap);
+		//CreateActionInput(m_InputConfigs[2], "LeftAction1", InputXBOX.LeftBumper, InputType.Tap);
+		//CreateActionInput(m_InputConfigs[2], "LeftAction2", InputXBOX.LeftTrigger, InputType.Tap);
+		//CreateActionInput(m_InputConfigs[2], "RightAction1", InputXBOX.RightBumper, InputType.Tap);
+		//CreateActionInput(m_InputConfigs[2], "RightAction2", InputXBOX.RightTrigger, InputType.Tap);
 	}
 
 	private int GetNumControllersConnected()
 	{
 		return Input.GetJoystickNames().Length;
-	}
-
-	private void SetDefaultPeripheral()
-	{
-		
 	}
 }
 
@@ -190,6 +235,7 @@ public class InputObj
 	public InputType Type;
 	public Enum InputElement;
 	public float ValueLastFrame;
+	public bool IsToggled;
 
 	public InputObj(InputType aType = InputType.Tap)
 	{
@@ -206,126 +252,89 @@ public class InputConfig
 	public int JoystickNumber;
 	public Dictionary<string, InputObj> InputObjects;
 
-	private string m_PeripheralString;
-
-	public InputConfig(InputPeripheral aPeripheral = InputPeripheral.NA, PlayerNumber aNumber = PlayerNumber.God, int aJoystickNumber = 0)
+	public InputConfig(InputPeripheral aPeripheral, PlayerNumber aNumber = PlayerNumber.God, int aJoystickNumber = 0)
 	{
 		Peripheral = aPeripheral;
 		Number = aNumber;
 		JoystickNumber = aJoystickNumber;
 		InputObjects = new Dictionary<string, InputObj>();
 
-		if (aPeripheral == InputPeripheral.Joystick && aNumber != PlayerNumber.God)
-		{
-			m_PeripheralString = Peripheral.ToString() + Number.ToString();
+		Peripheral.SetPeripheralString(Number);
+		Debug.Log(aNumber);
+		//SetInputObjs();
+	}
 
+	//--------------------------------------------------------------------	
+	//public delegate void ButtonInputDelegate();
+	//protected ButtonInputDelegate m_ButtonInputDel;
+	//public void CheckInput(InputObj aInputObject, Actor aActor, ButtonInputDelegate aInputDel)
+	//aInputDel();
+	//--------------------------------------------------------------------
+
+	public float CheckInput(InputObj aInputObject, Actor aActor)
+	{
+
+		if (InputManager.Instance.m_InputConfigs[(int)aActor.PlayerNumber].Peripheral != null)
+		{
+
+			switch (aInputObject.Type)
+			{
+
+				case InputType.Tap: //Needs some more work...
+					if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01 && aInputObject.ValueLastFrame < 0.01f) //need to handle GOD element
+					{
+						aInputObject.ValueLastFrame = 1.0f;
+						return Mathf.Sign(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString()));
+					}
+					else if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) < 0.01)
+					{
+						aInputObject.ValueLastFrame = 0.0f;
+					}
+					break;
+				case InputType.DoubleTap: // Not Implemented
+					break;
+				case InputType.Hold:
+					if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01)
+					{
+						return Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString());
+					}
+					break;
+				case InputType.Toggle:
+					if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01 && aInputObject.ValueLastFrame < 0.01f && !aInputObject.IsToggled) //need to handle GOD element
+					{
+						aInputObject.ValueLastFrame = 1.0f;
+						aInputObject.IsToggled = true;
+						return Mathf.Sign(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString()));
+					}
+					else if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01 && aInputObject.ValueLastFrame < 0.01f && aInputObject.IsToggled) //need to handle GOD element
+					{
+						aInputObject.ValueLastFrame = 1.0f;
+						aInputObject.IsToggled = false;
+					}
+					else if (aInputObject.IsToggled && Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) < 0.01) // if no input and toggled
+					{
+						//currently toggled
+						aInputObject.ValueLastFrame = 0.0f;
+						
+						return Mathf.Sign(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString()));
+					}
+					else if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) < 0.01)
+					{
+						aInputObject.ValueLastFrame = 0.0f;
+					}
+					break;
+				default:
+					Debug.Log("Unhandled Input Type " + aInputObject);
+					break;
+
+			}
+			return 0.0f;
 		}
 		else
 		{
-			m_PeripheralString = Peripheral.ToString();
+			Debug.Log(aActor.name + " Peripheral set to " + InputManager.Instance.m_InputConfigs[(int)aActor.PlayerNumber].Peripheral);
+			return 0.0f;
 		}
-		TempSetInputObjs();
 	}
 
-	public bool CheckInput(InputObj aInputObject)
-	{
-		switch (aInputObject.Type)
-		{
-			case InputType.Tap:
-				if (Input.GetAxis(m_PeripheralString + "_" + aInputObject.InputElement.ToString()) > 0) //need to handle GOD element
-				{
-					return true;
-				}
-				break;
-			case InputType.DoubleTap:
-				break;
-			case InputType.Hold:
-				if (Input.GetAxis(m_PeripheralString + "_" + aInputObject.InputElement.ToString()) > 0)
-				{
-					return true;
-				}
-				break;
-			case InputType.Toggle:
-				break;
-			default:
-				Debug.Log("Unhandled Input Type " + aInputObject);
-				break;
-		}
-		return false;
-	}
-
-	public void SetInputElement(InputObj aInputObj, InputPC aInput, InputType aInputType = InputType.Tap)
-	{
-		aInputObj.InputElement = aInput;
-		aInputObj.Type = aInputType;
-	}
-
-	public void SetInputElement(InputObj aInputObj, InputXBOX aInput, InputType aInputType = InputType.Tap)
-	{
-		aInputObj.InputElement = aInput;
-		aInputObj.Type = aInputType;
-	}
-
-	private void TempSetInputObjs()
-	{
-		InputObj MoveX = new InputObj(InputType.Hold);
-		InputObj MoveY = new InputObj(InputType.Hold);
-		InputObj CameraX = new InputObj(InputType.Hold);
-		InputObj CameraY = new InputObj(InputType.Hold);
-
-		InputObj CenterCamera = new InputObj(InputType.Tap);
-
-		InputObj Jump = new InputObj(InputType.Tap);
-		InputObj Sprint = new InputObj(InputType.Hold);
-		InputObj Dodge = new InputObj(InputType.Tap);
-
-		InputObj UseItem = new InputObj(InputType.Tap);
-		InputObj Interact = new InputObj(InputType.Tap);
-
-		InputObj LeftAction1 = new InputObj(InputType.Tap);
-		InputObj LeftAction2 = new InputObj(InputType.Tap);
-		InputObj RightAction1 = new InputObj(InputType.Tap);
-		InputObj RightAction2 = new InputObj(InputType.Tap);
-
-		InputObj Pause = new InputObj(InputType.Tap);
-		InputObj Help = new InputObj(InputType.Tap);
-
-		InputObjects.Add("MoveX", MoveX);
-		InputObjects.Add("MoveY", MoveY);
-		InputObjects.Add("CameraX", CameraX);
-		InputObjects.Add("CameraY", CameraY);
-
-		InputObjects.Add("CenterCamera", CenterCamera);
-
-		InputObjects.Add("Jump", Jump);
-		InputObjects.Add("Sprint", Sprint);
-		InputObjects.Add("Dodge", Dodge);
-
-		InputObjects.Add("UseItem", UseItem);
-		InputObjects.Add("Interact", Interact);
-
-		InputObjects.Add("LeftAction1", LeftAction1);
-		InputObjects.Add("LeftAction2", LeftAction2);
-		InputObjects.Add("RightAction1", RightAction1);
-		InputObjects.Add("RightAction2", RightAction2);
-
-		InputObjects.Add("Pause", Pause);
-		InputObjects.Add("Help", Help);
-	}
-
-	private void SetInputObjs(InputObj aInputObj, InputType aInputType, string aActionName)
-	{
-		aInputObj.Type = aInputType;
-
-		InputObjects.Add(aActionName, aInputObj);
-	}
-
-	private void CollectInputElements()
-	{
-		//Read input elements from the database...
-		//for (int i = 0; i < InputManager.Instance.m_InputActions.Count; i++)
-		//{
-		//	SetInputObjs(thing, InputType.Tap, InputManager.Instance.m_InputActions[i].Name);
-		//}
-	}
 }

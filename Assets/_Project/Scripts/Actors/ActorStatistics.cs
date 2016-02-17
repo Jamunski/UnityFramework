@@ -47,6 +47,7 @@ public class ActorStatistics
 		m_Actor = aActor;
 		InitializeStats();
 		InitializePools();
+		CalculateSpeed();
 	}
 
 	//private Methods

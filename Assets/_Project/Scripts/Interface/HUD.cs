@@ -31,7 +31,6 @@ public class HUD : MonoBehaviourSubject
 
 	public void InitializeBars()
 	{
-		Debug.Log(HealthBar);
 		HealthBar.GetComponent<RectTransform>().sizeDelta = new Vector2(HEALTH_MAX / MAX_BAR_LENGTH * 540, 0);
 	}
 
