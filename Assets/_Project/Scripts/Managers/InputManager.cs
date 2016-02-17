@@ -52,6 +52,7 @@ public class PeripheralXBOX : InputPeripheral
 
 public enum InputType
 {
+	Disabled = -1,
 	Tap = 0,
 	DoubleTap,
 	Hold,
@@ -136,10 +137,10 @@ public class InputManager
 	{
 		m_InputConfigs = new InputConfig[9];
 
-		m_InputConfigs[0] = new InputConfig(new PeripheralPC());
+		m_InputConfigs[0] = new InputConfig(new PeripheralPC(), PlayerNumber.God);
 		for (int i = 0; i < m_ControllersConnected; i++)
 		{
-			m_InputConfigs[i + 1] = new InputConfig(new PeripheralXBOX());
+			m_InputConfigs[i + 1] = new InputConfig(new PeripheralXBOX(), (PlayerNumber)i + 1);
 		}
 		//if controllers connected == 3, set the fourth player to Keyboard
 		if (m_ControllersConnected != 8)
@@ -147,44 +148,51 @@ public class InputManager
 			// Every other controller should have peripheral NA after this...
 			for (int i = 0; i < (m_InputConfigs.Length - 1) - m_ControllersConnected; i++)
 			{
-				m_InputConfigs[i + m_ControllersConnected + 1] = new InputConfig(new PeripheralNA()); // NULL INPUT PERIPHERAL
+				m_InputConfigs[i + m_ControllersConnected + 1] = new InputConfig(new PeripheralNA(), (PlayerNumber)i + m_ControllersConnected + 1); // NULL INPUT PERIPHERAL
 			}
-			m_InputConfigs[m_ControllersConnected + 1] = new InputConfig(new PeripheralPC());
+			m_InputConfigs[m_ControllersConnected + 1] = new InputConfig(new PeripheralPC(), (PlayerNumber)m_ControllersConnected + 1);
 		}
 	}
 
-	//PLEASE CHANGE ME!!! if there are 100 peripheral types then you will need to overload 100 times...
-	public void CreateActionInput(InputConfig aInputConfig, string aAction, InputPC aInput, InputType aInputType = InputType.Tap)
+	public void CreateActionInput(InputConfig aInputConfig, string aAction, Enum aPositiveInput, InputType aInputType = InputType.Hold, Enum aNegativeInput = null)
 	{
 		aInputConfig.InputObjects.Add(aAction, new InputObj());
-		aInputConfig.InputObjects[aAction].InputElement = aInput;
+		aInputConfig.InputObjects[aAction].InputElement = aPositiveInput;
 		aInputConfig.InputObjects[aAction].Type = aInputType;
+		if (aNegativeInput != null)
+		{
+			aInputConfig.InputObjects[aAction].InputElementNegative = aNegativeInput;
+			aInputConfig.InputObjects[aAction].IsConstructedAxis = true;
+			return;
+		}
+		aInputConfig.InputObjects[aAction].IsConstructedAxis = false;
 	}
 
-	public void CreateActionInput(InputConfig aInputConfig, string aAction, InputXBOX aInput, InputType aInputType = InputType.Tap)
+	public void ModifyActionInput(InputObj aInputObject, Enum aPositiveInput, Enum aNegativeInput, InputType aInputType)
 	{
-		aInputConfig.InputObjects.Add(aAction, new InputObj());
-		aInputConfig.InputObjects[aAction].InputElement = aInput;
-		aInputConfig.InputObjects[aAction].Type = aInputType;
+		//Same as create except you change the values of existing object rather than create a new one...
+		aInputObject.InputElement = aPositiveInput;
+		aInputObject.Type = aInputType;
+		if (aNegativeInput != null)
+		{
+			aInputObject.InputElementNegative = aNegativeInput;
+			aInputObject.IsConstructedAxis = true;
+			return;
+		}
+		aInputObject.IsConstructedAxis = false;
 	}
 
 	//PLEASE CHANGE ME!!!
 	private void InitializeActionInputs()
 	{
 		Debug.Log(m_InputConfigs[1].Peripheral.ToString());
-		CreateActionInput(m_InputConfigs[1], "MoveForward", InputPC.W, InputType.Hold);
-		CreateActionInput(m_InputConfigs[1], "MoveBackward", InputPC.S, InputType.Hold);
-		CreateActionInput(m_InputConfigs[1], "MoveLeft", InputPC.A, InputType.Hold);
-		CreateActionInput(m_InputConfigs[1], "MoveRight", InputPC.D, InputType.Hold);
-		// CheckAxisInput(InputObj aNegativeAction, Inputobj aPositiveAction)
-		// Create an axis input using both existing actions...
-		// This is useful for the situation with movement and stuff, players will still be able to remap the individual InputObj
-		// because the axis action will refer to those objects...
-
-		CreateActionInput(m_InputConfigs[1], "CameraX", InputPC.MouseX, InputType.Hold);
-		CreateActionInput(m_InputConfigs[1], "CameraY", InputPC.MouseY, InputType.Hold);
-		CreateActionInput(m_InputConfigs[1], "CameraX", InputPC.MouseX, InputType.Hold);
-		CreateActionInput(m_InputConfigs[1], "CameraY", InputPC.MouseY, InputType.Hold);
+		CreateActionInput(m_InputConfigs[1], "MoveY", InputPC.W, InputType.Hold, InputPC.S);
+		CreateActionInput(m_InputConfigs[1], "MoveX", InputPC.D, InputType.Hold, InputPC.A);
+		
+		//CreateActionInput(m_InputConfigs[1], "CameraX", InputPC.MouseX, InputType.Hold);
+		//CreateActionInput(m_InputConfigs[1], "CameraY", InputPC.MouseY, InputType.Hold);
+		CreateActionInput(m_InputConfigs[1], "CameraY", InputPC.UpArrow, InputType.Hold, InputPC.DownArrow);
+		CreateActionInput(m_InputConfigs[1], "CameraX", InputPC.RightArrow, InputType.Hold, InputPC.LeftArrow);
 
 		CreateActionInput(m_InputConfigs[1], "CenterCamera", InputPC.C, InputType.Tap);
 
@@ -236,10 +244,16 @@ public class InputObj
 	public Enum InputElement;
 	public float ValueLastFrame;
 	public bool IsToggled;
+	public float ToggleValue; // used for axis: is this toggled negative or positive???
 
-	public InputObj(InputType aType = InputType.Tap)
+	/// <summary>
+	/// Set this to true if this axis is made of two input objects...
+	/// </summary>
+	public bool IsConstructedAxis;
+	public Enum InputElementNegative;
+
+	public InputObj()
 	{
-		Type = aType;
 		ValueLastFrame = 0.0f;
 	}
 }
@@ -276,59 +290,120 @@ public class InputConfig
 
 		if (InputManager.Instance.m_InputConfigs[(int)aActor.PlayerNumber].Peripheral != null)
 		{
-
-			switch (aInputObject.Type)
+			if (aInputObject.IsConstructedAxis)
 			{
 
-				case InputType.Tap: //Needs some more work...
-					if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01 && aInputObject.ValueLastFrame < 0.01f) //need to handle GOD element
-					{
-						aInputObject.ValueLastFrame = 1.0f;
-						return Mathf.Sign(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString()));
-					}
-					else if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) < 0.01)
-					{
-						aInputObject.ValueLastFrame = 0.0f;
-					}
-					break;
-				case InputType.DoubleTap: // Not Implemented
-					break;
-				case InputType.Hold:
-					if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01)
-					{
-						return Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString());
-					}
-					break;
-				case InputType.Toggle:
-					if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01 && aInputObject.ValueLastFrame < 0.01f && !aInputObject.IsToggled) //need to handle GOD element
-					{
-						aInputObject.ValueLastFrame = 1.0f;
-						aInputObject.IsToggled = true;
-						return Mathf.Sign(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString()));
-					}
-					else if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01 && aInputObject.ValueLastFrame < 0.01f && aInputObject.IsToggled) //need to handle GOD element
-					{
-						aInputObject.ValueLastFrame = 1.0f;
-						aInputObject.IsToggled = false;
-					}
-					else if (aInputObject.IsToggled && Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) < 0.01) // if no input and toggled
-					{
-						//currently toggled
-						aInputObject.ValueLastFrame = 0.0f;
-						
-						return Mathf.Sign(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString()));
-					}
-					else if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) < 0.01)
-					{
-						aInputObject.ValueLastFrame = 0.0f;
-					}
-					break;
-				default:
-					Debug.Log("Unhandled Input Type " + aInputObject);
-					break;
+				switch (aInputObject.Type)
+				{
+
+					case InputType.Disabled:
+						Debug.Log("Key Disabled");
+						break;
+					case InputType.Tap: //Needs some more work...
+						if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01 && aInputObject.ValueLastFrame < 0.01f) //need to handle GOD element
+						{
+							aInputObject.ValueLastFrame = 1.0f;
+							return Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString());
+						}
+						else if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) < 0.01)
+						{
+							aInputObject.ValueLastFrame = 0.0f;
+						}
+						//NEGATIVE
+						if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElementNegative.ToString())) > 0.01 && aInputObject.ValueLastFrame > -0.01f) //need to handle GOD element
+						{
+							aInputObject.ValueLastFrame = -1.0f;
+							return -Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElementNegative.ToString());
+						}
+						else if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElementNegative.ToString())) < 0.01)
+						{
+							aInputObject.ValueLastFrame = 0.0f;
+						}
+						break;
+					case InputType.DoubleTap: // Not Implemented
+						break;
+					case InputType.Hold:
+						if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01)
+						{
+							return Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString());
+						}
+						//NEGATIVE
+						if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElementNegative.ToString())) > 0.01)
+						{
+							return -Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElementNegative.ToString());
+						}
+						break;
+					case InputType.Toggle: // Not Implemented
+						break;
+					default:
+						Debug.Log("Unhandled Input Type " + aInputObject);
+						break;
+
+				}
+				return 0.0f;
 
 			}
-			return 0.0f;
+			else // !aInputObject.IsConstructedAxis
+			{
+
+				switch (aInputObject.Type)
+				{
+
+					case InputType.Disabled:
+						Debug.Log("Key Disabled");
+						break;
+					case InputType.Tap: //Needs some more work...
+						if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01 && aInputObject.ValueLastFrame < 0.01f) //need to handle GOD element
+						{
+							aInputObject.ValueLastFrame = 1.0f;
+							return Mathf.Sign(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString()));
+						}
+						else if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) < 0.01)
+						{
+							aInputObject.ValueLastFrame = 0.0f;
+						}
+						break;
+					case InputType.DoubleTap: // Not Implemented
+						break;
+					case InputType.Hold:
+						if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01)
+						{
+							return Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString());
+						}
+						break;
+					case InputType.Toggle:
+						if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01 && aInputObject.ValueLastFrame < 0.01f && !aInputObject.IsToggled) //need to handle GOD element
+						{
+							aInputObject.ValueLastFrame = 1.0f;
+							aInputObject.IsToggled = true;
+							return Mathf.Sign(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString()));
+						}
+						else if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) > 0.01 && aInputObject.ValueLastFrame < 0.01f && aInputObject.IsToggled) //need to handle GOD element
+						{
+							aInputObject.ValueLastFrame = 1.0f;
+							aInputObject.IsToggled = false;
+						}
+						else if (aInputObject.IsToggled && Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) < 0.01) // if no input and toggled
+						{
+							//currently toggled
+							aInputObject.ValueLastFrame = 0.0f;
+
+							return Mathf.Sign(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString()));
+						}
+						else if (Mathf.Abs(Input.GetAxis(Peripheral.PeripheralString + "_" + aInputObject.InputElement.ToString())) < 0.01)
+						{
+							aInputObject.ValueLastFrame = 0.0f;
+						}
+						break;
+					default:
+						Debug.Log("Unhandled Input Type " + aInputObject);
+						break;
+
+				}
+				return 0.0f;
+
+			}
+
 		}
 		else
 		{

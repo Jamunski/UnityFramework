@@ -82,9 +82,14 @@ public class Actor : MonoBehaviourSubject
 			m_Movement.Movement(new Vector3(MovementInput().x, MovementInput().y, 0));
 		}
 
+		if (CameraInput().magnitude > 0.01f)
+		{
+			m_Movement.Camera(new Vector3(CameraInput().x, CameraInput().y, 0));
+		}
+
 		if(m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["Jump"], this) > 0.01f)
 		{
-
+			m_Abilities.Jump();
 		}
 
 		// Movement
@@ -109,15 +114,22 @@ public class Actor : MonoBehaviourSubject
 	{
 		Vector2 movementVector = new Vector2();
 
-		movementVector.y += m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["MoveForward"], this);
+		movementVector.x = m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["MoveX"], this);
 
-		movementVector.y -= m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["MoveBackward"], this);
-
-		movementVector.x -= m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["MoveLeft"], this);
-
-		movementVector.x += m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["MoveRight"], this);
+		movementVector.y = m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["MoveY"], this);
 
 		return movementVector;
+	}
+
+	public Vector2 CameraInput()
+	{
+		Vector2 cameraVector = new Vector2();
+
+		cameraVector.x = m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["CameraX"], this);
+
+		cameraVector.y = m_PlayerInputConfig.CheckInput(m_PlayerInputConfig.InputObjects["CameraY"], this);
+
+		return cameraVector;
 	}
 
 	public void Pause() // Probably should be handled in the game manager...
